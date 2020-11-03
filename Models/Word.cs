@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace EnglishApi.Models
 {
-    public class Word
+    public class Word:BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; }
-
+        
         [Required]
         [MaxLength(250)]
         public string Original { get; set; }
@@ -18,5 +16,7 @@ namespace EnglishApi.Models
         [Required]
         [MaxLength(250)]
         public string Translate { get; set; }
+
+       
     }
 }

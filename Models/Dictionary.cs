@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace EnglishApi.Models
 {
-    public class Dictionary
+    public class Dictionary:BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; }
-
+      
         [Required]
         [MaxLength(250)]
         public string SecretName { get; set; }
