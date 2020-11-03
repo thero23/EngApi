@@ -36,13 +36,50 @@ namespace EnglishApi.Controllers
 
         [HttpPost]
         [Route("words", Name = "AddWord")]
-        public async Task<ActionResult> AddWord([FromBody] Word word)
+        public async Task<IActionResult> AddWord([FromBody] Word word)
         {
+            if (word == null)
+            {
+                return NotFound();
+            }
             await _wordRepo.Create(word);
             return CreatedAtRoute(nameof(GetWordById), new {word.Id }, word);
 
         }
 
+        [HttpDelete]
+        [Route("words/{id}", Name = "DeleteWord")]
+        public async Task<IActionResult> DeleteWord(Guid id)
+        {
+            var item =  _wordRepo.GetById(id);
+            if (item == null)
+            {
+                return BadRequest();
+            }
+            await _wordRepo.Delete(item);
+            return Ok();
+        }
 
+        [HttpPut]
+        [Route("words/{id}", Name = "UpdateWord")]
+        public async Task<IActionResult> UpdateWord(Guid id, [FromBody] Word word)
+        {
+            var item = _wordRepo.GetById(id);
+            if (word == null)
+            {
+                return BadRequest();
+            }
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+            
+            
+            await _wordRepo.Update(id,word);
+            return Ok();
+        }
+
+        
     }
 }

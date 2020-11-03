@@ -10,7 +10,7 @@ namespace EnglishApi.Data.Interfaces
 
         Task Create(T entity);
         Task Delete(T entity);
-        void Update(T entity);
+        Task Update(Guid id, T entity);
         IEnumerable<T> GetAll();
         T GetById(Guid id);
 

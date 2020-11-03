@@ -18,27 +18,23 @@ namespace EnglishApi.Data.Repositories
         }
         public async Task Create(T entity)
         {
-            if (entity == null)
-            {
-                throw  new ArgumentNullException(nameof(entity));
-            }
+            
             await _context.Set<T>().AddAsync(entity);
             await _context.SaveChangesAsync();
         }
 
         public async Task Delete(T entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            } 
+            
             _context.Set<T>().Remove(entity);
             await _context.SaveChangesAsync();
         }
 
-        public void Update(T entity)
+        public async Task Update(Guid id,T entity)
         {
-            throw new NotImplementedException();
+            //хз
+            _context.Set<T>().Update(entity);
+            await _context.SaveChangesAsync();
         }
 
         public IEnumerable<T> GetAll()
