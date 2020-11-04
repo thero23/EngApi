@@ -14,11 +14,17 @@ namespace EnglishApi.Controllers
     public class DictionariesController : ControllerBase
     {
         private readonly IBaseRepository<Word> _wordRepo;
+        private readonly IBaseRepository<Dictionary> _dictRepo;
 
-        public DictionariesController(IBaseRepository<Word> wordRepo)
+        public DictionariesController(IBaseRepository<Word> wordRepo, IBaseRepository<Dictionary> dictRepo)
         {
             _wordRepo = wordRepo;
+            _dictRepo = dictRepo;
         }
+
+
+        //Words
+        // api/dictionaries/words/...
 
         [HttpGet]
         [Route("words")]
@@ -80,6 +86,51 @@ namespace EnglishApi.Controllers
             return Ok();
         }
 
-        
+
+        //Dictionary
+        // api/dictionaries/...
+
+
+        [HttpGet]
+        [Route("", Name = "GetAllDictionaries")]
+        public ActionResult<IEnumerable<Dictionary>> GetAllDictionaries()
+        {
+            return Ok(_dictRepo.GetAll());
+        }
+
+        [HttpGet]
+        [Route("{id}", Name = "GetDictionaryById")]
+        public ActionResult<Dictionary> GetDictionaryById(Guid id)
+        {
+            return Ok(_dictRepo.GetById(id));
+        }
+
+        [HttpPost]
+        [Route("", Name = "AddDictionary")]
+        public async Task<IActionResult> AddDictionary([FromBody] Dictionary dictionary)
+        {
+            if (dictionary == null)
+            {
+                return NotFound();
+            }
+            await _dictRepo.Create(dictionary);
+            return CreatedAtRoute(nameof(GetDictionaryById), new { dictionary.Id }, dictionary);
+
+        }
+
+        [HttpDelete]
+        [Route("{id}", Name = "DeleteDictionary")]
+        public async Task<IActionResult> DeleteDictionary(Guid id)
+        {
+            var item = _dictRepo.GetById(id);
+            if (item == null)
+            {
+                return BadRequest();
+            }
+            await _dictRepo.Delete(item);
+            return Ok();
+        }
+
+
     }
 }
