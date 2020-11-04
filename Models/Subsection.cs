@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 
 namespace EnglishApi.Models
 {
-    public class Subsection
+    public class Subsection:BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; }
-
         [Required]
         [MaxLength(250)]
         public string Name { get; set; }

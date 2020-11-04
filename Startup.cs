@@ -35,6 +35,7 @@ namespace EnglishApi
                     Configuration.GetConnectionString("EnglishConnection")));
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>) );
             services.AddScoped<IDictionaryWordRepository,DictionaryWordRepository>();
+            services.AddScoped<ISectionRepository,SectionRepository>();
             services.AddControllers();
         }
 
