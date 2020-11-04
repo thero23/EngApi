@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using IDictionaryWordRepository = EnglishApi.Data.Interfaces.IDictionaryWordRepository;
 
 namespace EnglishApi
 {
@@ -33,6 +34,7 @@ namespace EnglishApi
                 options.UseSqlServer(
                     Configuration.GetConnectionString("EnglishConnection")));
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>) );
+            services.AddScoped<IDictionaryWordRepository,DictionaryWordRepository>();
             services.AddControllers();
         }
 

@@ -17,6 +17,7 @@ namespace EnglishApi.Data
 
         public DbSet<Word> Words{ get; set; }
         public DbSet<Dictionary> Dictionaries{ get; set; }
+        public DbSet<DictionaryWord> DictionaryWords{ get; set; }
 
 
     }

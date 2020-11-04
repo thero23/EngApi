@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EnglishApi.Contracts;
 using EnglishApi.Data.Interfaces;
 using EnglishApi.Models;
 using Microsoft.AspNetCore.Http;
@@ -15,11 +16,13 @@ namespace EnglishApi.Controllers
     {
         private readonly IBaseRepository<Word> _wordRepo;
         private readonly IBaseRepository<Dictionary> _dictRepo;
+        private readonly IDictionaryWordRepository _wordDictRepo;
 
-        public DictionariesController(IBaseRepository<Word> wordRepo, IBaseRepository<Dictionary> dictRepo)
+        public DictionariesController(IBaseRepository<Word> wordRepo, IBaseRepository<Dictionary> dictRepo, IDictionaryWordRepository wordDictRepo)
         {
             _wordRepo = wordRepo;
             _dictRepo = dictRepo;
+            _wordDictRepo = wordDictRepo;
         }
 
 
@@ -131,6 +134,64 @@ namespace EnglishApi.Controllers
             return Ok();
         }
 
+        //DictionaryWord
+        //api/dictionary/dictionary-word/..
 
+
+        [HttpGet]
+        [Route("dictionary-word/{id}", Name = "GetWordsFromDictionary")]
+        public ActionResult<IEnumerable<Word>> GetWordsFromDictionary(Guid id)
+        {
+            var dictionary = _dictRepo.GetById(id);
+            if (dictionary == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_wordDictRepo.GetWordsFromDictionary(dictionary));
+
+        }
+
+        [HttpPost]
+        [Route("dictionary-word", Name = "AddWordToDictionary")]
+        public async Task<IActionResult> AddWordToDictionary([FromBody] AddWordToDictionaryRequest request)
+        {
+            var dictionary = _dictRepo.GetById(request.DictionaryId);
+            var word = _wordRepo.GetById(request.WordId);
+            
+            if (word == null || dictionary == null)
+            {
+                return NotFound();
+            }
+
+            if (_wordDictRepo.IsWordInDictionary(word, dictionary))
+            {
+                return BadRequest();
+            }
+
+            await _wordDictRepo.AddWordToDictionary(word, dictionary);
+            return Ok(); //нужен 201
+        }
+
+
+        [HttpDelete]
+        [Route("dictionary-word", Name = "RemoveWordFromDictionary")]
+        public async Task<IActionResult> RemoveWordFromDictionary([FromBody] DeleteWordFromDictionaryRequest request)
+        {
+            var dictionary = _dictRepo.GetById(request.DictionaryId);
+            var word = _wordRepo.GetById(request.WordId);
+
+            if (word == null || dictionary == null)
+            {
+                return NotFound();
+            }
+            if (!_wordDictRepo.IsWordInDictionary(word, dictionary))
+            {
+                return BadRequest();
+            }
+
+            await _wordDictRepo.RemoveWordFromDictionary(word, dictionary);
+            return NoContent(); 
+        }
     }
 }
