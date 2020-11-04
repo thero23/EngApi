@@ -4,14 +4,16 @@ using EnglishApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EnglishApi.Migrations
 {
     [DbContext(typeof(EnglishContext))]
-    partial class EnglishContextModelSnapshot : ModelSnapshot
+    [Migration("20201104195041_AddLinkSectionAndSubsections")]
+    partial class AddLinkSectionAndSubsections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,48 +82,6 @@ namespace EnglishApi.Migrations
                     b.ToTable("Sections");
                 });
 
-            modelBuilder.Entity("EnglishApi.Models.SectionDictionary", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DictionaryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SectionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DictionaryId");
-
-                    b.HasIndex("SectionId");
-
-                    b.ToTable("SectionDictionaries");
-                });
-
-            modelBuilder.Entity("EnglishApi.Models.SectionUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SectionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SectionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SectionUsers");
-                });
-
             modelBuilder.Entity("EnglishApi.Models.Subsection", b =>
                 {
                     b.Property<Guid>("Id")
@@ -144,45 +104,6 @@ namespace EnglishApi.Migrations
                     b.HasIndex("SectionId");
 
                     b.ToTable("Subsections");
-                });
-
-            modelBuilder.Entity("EnglishApi.Models.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserRoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserRoleId");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("EnglishApi.Models.UserRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("EnglishApi.Models.Word", b =>
@@ -221,50 +142,11 @@ namespace EnglishApi.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EnglishApi.Models.SectionDictionary", b =>
-                {
-                    b.HasOne("EnglishApi.Models.Dictionary", "Dictionary")
-                        .WithMany()
-                        .HasForeignKey("DictionaryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EnglishApi.Models.Section", "Section")
-                        .WithMany()
-                        .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EnglishApi.Models.SectionUser", b =>
-                {
-                    b.HasOne("EnglishApi.Models.Section", "Section")
-                        .WithMany()
-                        .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EnglishApi.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("EnglishApi.Models.Subsection", b =>
                 {
                     b.HasOne("EnglishApi.Models.Section", "Section")
                         .WithMany("Subsections")
                         .HasForeignKey("SectionId");
-                });
-
-            modelBuilder.Entity("EnglishApi.Models.User", b =>
-                {
-                    b.HasOne("EnglishApi.Models.UserRole", "UserRole")
-                        .WithMany("Users")
-                        .HasForeignKey("UserRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

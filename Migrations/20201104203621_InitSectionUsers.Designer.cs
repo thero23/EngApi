@@ -4,14 +4,16 @@ using EnglishApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EnglishApi.Migrations
 {
     [DbContext(typeof(EnglishContext))]
-    partial class EnglishContextModelSnapshot : ModelSnapshot
+    [Migration("20201104203621_InitSectionUsers")]
+    partial class InitSectionUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

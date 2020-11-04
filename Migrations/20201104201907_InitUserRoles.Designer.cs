@@ -4,14 +4,16 @@ using EnglishApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EnglishApi.Migrations
 {
     [DbContext(typeof(EnglishContext))]
-    partial class EnglishContextModelSnapshot : ModelSnapshot
+    [Migration("20201104201907_InitUserRoles")]
+    partial class InitUserRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,27 +103,6 @@ namespace EnglishApi.Migrations
                     b.ToTable("SectionDictionaries");
                 });
 
-            modelBuilder.Entity("EnglishApi.Models.SectionUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SectionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SectionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SectionUsers");
-                });
-
             modelBuilder.Entity("EnglishApi.Models.Subsection", b =>
                 {
                     b.Property<Guid>("Id")
@@ -160,12 +141,7 @@ namespace EnglishApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserRoleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserRoleId");
 
                     b.ToTable("Users");
                 });
@@ -236,35 +212,11 @@ namespace EnglishApi.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EnglishApi.Models.SectionUser", b =>
-                {
-                    b.HasOne("EnglishApi.Models.Section", "Section")
-                        .WithMany()
-                        .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EnglishApi.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("EnglishApi.Models.Subsection", b =>
                 {
                     b.HasOne("EnglishApi.Models.Section", "Section")
                         .WithMany("Subsections")
                         .HasForeignKey("SectionId");
-                });
-
-            modelBuilder.Entity("EnglishApi.Models.User", b =>
-                {
-                    b.HasOne("EnglishApi.Models.UserRole", "UserRole")
-                        .WithMany("Users")
-                        .HasForeignKey("UserRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
