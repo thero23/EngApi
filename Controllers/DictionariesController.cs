@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EnglishApi.Contracts;
+using EnglishApi.Data;
 using EnglishApi.Data.Interfaces;
+using EnglishApi.Data.Repositories;
 using EnglishApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace EnglishApi.Controllers
 {
@@ -14,78 +17,78 @@ namespace EnglishApi.Controllers
     [ApiController]
     public class DictionariesController : ControllerBase
     {
-        private readonly IBaseRepository<Word> _wordRepo;
-        private readonly IBaseRepository<Dictionary> _dictRepo;
-        private readonly IDictionaryWordRepository _wordDictRepo;
+        private readonly IRepositoryManager _repository;
+        
 
-        public DictionariesController(IBaseRepository<Word> wordRepo, IBaseRepository<Dictionary> dictRepo, IDictionaryWordRepository wordDictRepo)
+
+        public DictionariesController(IRepositoryManager repository)
         {
-            _wordRepo = wordRepo;
-            _dictRepo = dictRepo;
-            _wordDictRepo = wordDictRepo;
+
+            _repository = repository;
+           
         }
 
 
         //Words
         // api/dictionaries/words/...
 
+
+
         [HttpGet]
         [Route("words")]
         public ActionResult<IEnumerable<Word>> GetAllWords()
         {
-            return Ok(_wordRepo.GetAll());
+            var items = _repository.Word.FindAll(false);
+             return Ok(items);
+
+            
         }
 
         [HttpGet]
         [Route("words/{id}", Name = "GetWordById")]
         public ActionResult<Word> GetWordById(Guid id)
         {
-            return Ok(_wordRepo.GetById(id));
+            return Ok(_repository.Word.FindByCondition(p=>p.Id == id, false));
         }
 
         [HttpPost]
         [Route("words", Name = "AddWord")]
-        public async Task<IActionResult> AddWord([FromBody] Word word)
+        public IActionResult AddWord([FromBody] Word word)
         {
             if (word == null)
             {
                 return NotFound();
             }
-            await _wordRepo.Create(word);
-            return CreatedAtRoute(nameof(GetWordById), new {word.Id }, word);
+            _repository.Word.Create(word);
+            _repository.Save();
+            return CreatedAtRoute(nameof(GetWordById), new { word.Id }, word);
 
         }
 
         [HttpDelete]
         [Route("words/{id}", Name = "DeleteWord")]
-        public async Task<IActionResult> DeleteWord(Guid id)
+        public IActionResult DeleteWord(Guid id)
         {
-            var item =  _wordRepo.GetById(id);
+            var item = _repository.Word.FindByCondition(p=>p.Id == id,true);
             if (item == null)
             {
                 return BadRequest();
             }
-            await _wordRepo.Delete(item);
+            _repository.Word.Delete(item.First());
+            _repository.Save();
             return Ok();
         }
 
         [HttpPut]
-        [Route("words/{id}", Name = "UpdateWord")]
-        public async Task<IActionResult> UpdateWord(Guid id, [FromBody] Word word)
+        [Route("words", Name = "UpdateWord")]
+        public IActionResult UpdateWord([FromBody] Word word)
         {
-            var item = _wordRepo.GetById(id);
             if (word == null)
             {
                 return BadRequest();
             }
-
-            if (item == null)
-            {
-                return NotFound();
-            }
-            
-            
-            await _wordRepo.Update(id,word);
+            _repository.Word.Update(word);
+            _repository.Save();
             return Ok();
         }
 
@@ -98,39 +101,39 @@ namespace EnglishApi.Controllers
         [Route("", Name = "GetAllDictionaries")]
         public ActionResult<IEnumerable<Dictionary>> GetAllDictionaries()
         {
-            return Ok(_dictRepo.GetAll());
+            return Ok(_repository.Dictionary.FindAll(false));
         }
 
         [HttpGet]
         [Route("{id}", Name = "GetDictionaryById")]
         public ActionResult<Dictionary> GetDictionaryById(Guid id)
         {
-            return Ok(_dictRepo.GetById(id));
+            return Ok(_repository.Dictionary.FindByCondition(p=>p.Id==id,false));
         }
 
         [HttpPost]
         [Route("", Name = "AddDictionary")]
-        public async Task<IActionResult> AddDictionary([FromBody] Dictionary dictionary)
+        public IActionResult AddDictionary([FromBody] Dictionary dictionary)
         {
             if (dictionary == null)
             {
                 return NotFound();
             }
-            await _dictRepo.Create(dictionary);
+            _repository.Dictionary.Create(dictionary);
             return CreatedAtRoute(nameof(GetDictionaryById), new { dictionary.Id }, dictionary);
 
         }
 
         [HttpDelete]
         [Route("{id}", Name = "DeleteDictionary")]
-        public async Task<IActionResult> DeleteDictionary(Guid id)
+        public IActionResult DeleteDictionary(Guid id)
         {
-            var item = _dictRepo.GetById(id);
+            var item = _repository.Dictionary.FindByCondition(p => p.Id == id, true).FirstOrDefault();
             if (item == null)
             {
                 return BadRequest();
             }
-            await _dictRepo.Delete(item);
+            _repository.Dictionary.Delete(item);
             return Ok();
         }
 
@@ -139,59 +142,63 @@ namespace EnglishApi.Controllers
 
 
         [HttpGet]
-        [Route("dictionary-word/{id}", Name = "GetWordsFromDictionary")]
+        [Route("{id}/words", Name = "GetWordsFromDictionary")]
         public ActionResult<IEnumerable<Word>> GetWordsFromDictionary(Guid id)
         {
-            var dictionary = _dictRepo.GetById(id);
-            if (dictionary == null)
+            var item = _repository.Dictionary.FindByCondition(p => p.Id == id, false).FirstOrDefault();
+
+            if (item == null)
             {
                 return NotFound();
             }
 
-            return Ok(_wordDictRepo.GetWordsFromDictionary(dictionary));
+            return Ok(_repository.DictionaryWord.GetWordsFromDictionary(item));
 
         }
 
         [HttpPost]
-        [Route("dictionary-word", Name = "AddWordToDictionary")]
-        public async Task<IActionResult> AddWordToDictionary([FromBody] AddWordToDictionaryRequest request)
+        [Route("{dictionaryId}/words/{wordId}", Name = "AddWordToDictionary")]
+        public IActionResult AddWordToDictionary(Guid dictionaryId, Guid wordId)
         {
-            var dictionary = _dictRepo.GetById(request.DictionaryId);
-            var word = _wordRepo.GetById(request.WordId);
-            
+            var dictionary = _repository.Dictionary.FindByCondition(p=>p.Id == dictionaryId, false).FirstOrDefault();
+            var word = _repository.Word.FindByCondition(p => p.Id == wordId, false).FirstOrDefault();
+
             if (word == null || dictionary == null)
             {
                 return NotFound();
             }
 
-            if (_wordDictRepo.IsWordInDictionary(word, dictionary))
+            if (_repository.DictionaryWord.IsWordInDictionary(word, dictionary))
             {
                 return BadRequest();
             }
 
-            await _wordDictRepo.AddWordToDictionary(word, dictionary);
-            return Ok(); //нужен 201
+            _repository.DictionaryWord.AddWordToDictionary(word,dictionary);
+            _repository.Save();
+            return Ok();
+
         }
 
 
         [HttpDelete]
-        [Route("dictionary-word", Name = "RemoveWordFromDictionary")]
-        public async Task<IActionResult> RemoveWordFromDictionary([FromBody] DeleteWordFromDictionaryRequest request)
+        [Route("{dictionaryId}/words/{wordId}", Name = "RemoveWordFromDictionary")]
+        public IActionResult RemoveWordFromDictionary(Guid wordId, Guid dictionaryId)
         {
-            var dictionary = _dictRepo.GetById(request.DictionaryId);
-            var word = _wordRepo.GetById(request.WordId);
+            var dictionary = _repository.Dictionary.FindByCondition(p => p.Id == dictionaryId, false).FirstOrDefault();
+            var word = _repository.Word.FindByCondition(p => p.Id == wordId, false).FirstOrDefault();
 
             if (word == null || dictionary == null)
             {
                 return NotFound();
             }
-            if (!_wordDictRepo.IsWordInDictionary(word, dictionary))
+            if (!_repository.DictionaryWord.IsWordInDictionary(word, dictionary))
             {
                 return BadRequest();
             }
 
-            await _wordDictRepo.RemoveWordFromDictionary(word, dictionary);
-            return NoContent(); 
+            _repository.DictionaryWord.RemoveWordFromDictionary(word, dictionary);
+            _repository.Save();
+            return NoContent();
         }
     }
 }

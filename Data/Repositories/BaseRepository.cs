@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using EnglishApi.Data.Interfaces;
 using EnglishApi.Models;
@@ -8,44 +9,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EnglishApi.Data.Repositories
 {
-    public class BaseRepository<T>:IBaseRepository<T> where T:BaseEntity
+    public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        private readonly EnglishContext _context;
+        protected EnglishContext _context;
 
         public BaseRepository(EnglishContext context)
         {
             _context = context;
         }
-        public async Task Create(T entity)
-        {
-            
-            await _context.Set<T>().AddAsync(entity);
-            await _context.SaveChangesAsync();
-        }
 
-        public async Task Delete(T entity)
-        {
-            
-            _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
-        }
 
-        public async Task Update(Guid id,T entity)
-        {
-            //хз
-            _context.Set<T>().Update(entity);
-            await _context.SaveChangesAsync();
-        }
+        public IQueryable<T> FindAll(bool trackChanges) =>
+            !trackChanges
+                ? _context.Set<T>()
+                    .AsNoTracking()
+                : _context.Set<T>();
 
-        public IEnumerable<T> GetAll()
-        {
-            return _context.Set<T>().AsEnumerable();
-        }
+        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression,
+            bool trackChanges) =>
+            !trackChanges
+                ? _context.Set<T>()
+                    .Where(expression)
+                    .AsNoTracking()
+                : _context.Set<T>()
+                    .Where(expression);
 
-        public T GetById(Guid id) 
-        {
-            
-             return _context.Set<T>().FirstOrDefault(p => p.Id == id);
-        }
+        public void Create(T entity) => _context.Set<T>().Add(entity);
+        public virtual void Update(T entity) => _context.Set<T>().Update(entity);
+        public void Delete(T entity) => _context.Set<T>().Remove(entity);
+
     }
+
+
+
+
+
 }

@@ -24,28 +24,26 @@ namespace EnglishApi.Data.Repositories
             return _context.Words.Where(p => wordsId.Contains(p.Id)).ToList();
         }
 
-        public async Task AddWordToDictionary(Word word, Dictionary dictionary)
+        public void AddWordToDictionary(Word word, Dictionary dictionary)
         {
             
                 var item = new DictionaryWord
                 {
                     WordId = word.Id,
-                    DictionaryId = dictionary.Id,
-                    Word = word,
-                    Dictionary = dictionary
+                    DictionaryId = dictionary.Id
                 };
 
-                await _context.DictionaryWords.AddAsync(item);
-                await _context.SaveChangesAsync();
+                _context.DictionaryWords.Add(item);
+                
 
         }
 
-        public async Task RemoveWordFromDictionary(Word word, Dictionary dictionary)
+        public void RemoveWordFromDictionary(Word word, Dictionary dictionary)
         {
             var item = _context.DictionaryWords.FirstOrDefault(p => p.Dictionary == dictionary && p.Word == word);
            
             _context.DictionaryWords.Remove(item);
-            await _context.SaveChangesAsync();
+            
 
         }
 
