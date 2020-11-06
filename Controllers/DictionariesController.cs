@@ -6,6 +6,7 @@ using EnglishApi.Contracts;
 using EnglishApi.Data;
 using EnglishApi.Data.Interfaces;
 using EnglishApi.Data.Repositories;
+using EnglishApi.Logger;
 using EnglishApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,21 +19,26 @@ namespace EnglishApi.Controllers
     public class DictionariesController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
-        
+        private readonly ILoggerManager _logger;
 
 
-        public DictionariesController(IRepositoryManager repository)
+
+        public DictionariesController(IRepositoryManager repository, ILoggerManager logger)
         {
 
             _repository = repository;
-           
+            _logger = logger;
+
         }
 
 
         //Words
         // api/dictionaries/words/...
 
-
+        //_logger.LogInfo("Here is info message from our values controller.");
+        //_logger.LogDebug("Here is debug message from our values controller.");
+        //_logger.LogWarn("Here is warn message from our values controller.");
+        //_logger.LogError("Here is an error message from our values controller.");
 
         [HttpGet]
         [Route("words")]

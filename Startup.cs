@@ -1,6 +1,8 @@
+using System.IO;
 using EnglishApi.Data;
 using EnglishApi.Data.Interfaces;
 using EnglishApi.Data.Repositories;
+using EnglishApi.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -8,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 
 namespace EnglishApi
 {
@@ -15,6 +18,9 @@ namespace EnglishApi
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(),
+                "/nlog.config"));
+
             Configuration = configuration;
         }
 
@@ -23,15 +29,14 @@ namespace EnglishApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           
-
             services.AddDbContext<EnglishContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("EnglishConnection")));
+
             services.AddScoped<IRepositoryManager,RepositoryManager>();
-            //services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>) );
-            //services.AddScoped<IDictionaryWordRepository,DictionaryWordRepository>();
-            //services.AddScoped<ISectionRepository,SectionRepository>();
+            services.AddScoped<ILoggerManager, LoggerManager>();
+
+
             services.AddControllers();
         }
 
