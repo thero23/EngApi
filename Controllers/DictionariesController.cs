@@ -39,7 +39,7 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("words")]
-        public async Task<ActionResult<IEnumerable<Word>>> GetAllWords()
+        public async Task<IActionResult> GetAllWords()
         {
            
             var words = await _repository.Word.FindAll(false);
@@ -51,7 +51,7 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("words/{id}", Name = "GetWordById")]
-        public async Task<ActionResult<WordGetDto>> GetWordById(Guid id)
+        public async Task<IActionResult> GetWordById(Guid id)
         {
             var word = (await _repository.Word.FindByCondition(p => p.Id == id, false)).FirstOrDefault();
             
@@ -70,7 +70,7 @@ namespace EnglishApi.Controllers
         {
            
             var word = _mapper.Map<Word>(wordDto);
-             _repository.Word.Create(word);
+            await _repository.Word.Create(word);
             await _repository.Save();
             return CreatedAtRoute(nameof(GetWordById), new { word.Id }, word);
 
@@ -112,7 +112,7 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("", Name = "GetAllDictionaries")]
-        public async Task<ActionResult<IEnumerable<DictionaryGetDto>>> GetAllDictionaries()
+        public async Task<IActionResult> GetAllDictionaries()
         {
             var dictionaries =await _repository.Dictionary.FindAll(false);
             var dictionariesDto = _mapper.Map<IEnumerable<DictionaryGetDto>>(dictionaries);
@@ -121,7 +121,7 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("{id}", Name = "GetDictionaryById")]
-        public async Task<ActionResult<Dictionary>> GetDictionaryById(Guid id)
+        public async Task<IActionResult> GetDictionaryById(Guid id)
         {
             var item =await _repository.Dictionary.FindByCondition(p => p.Id == id, false);
             if (item == null)
@@ -141,7 +141,7 @@ namespace EnglishApi.Controllers
                 return NotFound();
             }
             var dictionary = _mapper.Map<Dictionary>(dictionaryDto);
-            _repository.Dictionary.Create(dictionary);
+            await _repository.Dictionary.Create(dictionary);
             await _repository.Save();
             return CreatedAtRoute(nameof(GetDictionaryById), new { dictionary.Id }, dictionary);
 
@@ -179,7 +179,7 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("{id}/words", Name = "GetWordsFromDictionary")]
-        public async Task<ActionResult<IEnumerable<Word>>> GetWordsFromDictionary(Guid id)
+        public async Task<IActionResult> GetWordsFromDictionary(Guid id)
         {
             var dictionary = (await _repository.Dictionary.FindByCondition(p => p.Id == id, false)).FirstOrDefault();
 
@@ -222,7 +222,7 @@ namespace EnglishApi.Controllers
                 return BadRequest();
             }
 
-            _repository.DictionaryWord.AddWordToDictionary(word,dictionary);
+            await _repository.DictionaryWord.AddWordToDictionary(word,dictionary);
             await _repository.Save();
             return Ok();
 

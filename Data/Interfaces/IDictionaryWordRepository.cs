@@ -9,7 +9,7 @@ namespace EnglishApi.Data.Interfaces
     public interface IDictionaryWordRepository
     {
         Task<IEnumerable<Word>> GetWordsFromDictionary(Dictionary dictionary);
-        void AddWordToDictionary(Word word, Dictionary dictionary);
+        Task AddWordToDictionary(Word word, Dictionary dictionary);
         void RemoveWordFromDictionary(Word word, Dictionary dictionary);
         bool IsWordInDictionary(Word word, Dictionary dictionary);
     }

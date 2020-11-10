@@ -25,28 +25,28 @@ namespace EnglishApi.Data.Repositories
             };
 
             await _context.SectionUsers.AddAsync(item);
-            await _context.SaveChangesAsync();
+           
 
         }
 
-        public async Task AddSubsectionToSection(Subsection subsection, Section section)
+        public void AddSubsectionToSection(Subsection subsection, Section section)
         {
             
             subsection.SectionId = section.Id;
-            await _context.SaveChangesAsync();
+           
 
         }
 
         public bool IsSubsectionInSection(Subsection subsection, Section section)
         {
-            return subsection.SectionId == section.Id;
+            return subsection.SectionId.Equals(section.Id);
         }
 
         public async Task DeleteUserFromSection(User user, Section section)
         {
-            var item = _context.SectionUsers.SingleOrDefault(p => p.SectionId == section.Id && p.UserId == user.Id);
+            var item = await _context.SectionUsers.SingleOrDefaultAsync(p => p.SectionId == section.Id && p.UserId == user.Id);
             _context.SectionUsers.Remove(item);
-            await _context.SaveChangesAsync();
+            
 
         }
 

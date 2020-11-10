@@ -21,20 +21,21 @@ namespace EnglishApi.Data.Repositories
 
         public async Task<IQueryable<T>> FindAll(bool trackChanges) =>
             !trackChanges
-                ? _context.Set<T>()
-                    .AsNoTracking()
-                : _context.Set<T>();
+                ? (await _context.Set<T>()
+                    .AsNoTracking().ToListAsync()).AsQueryable()
+                : (await _context.Set<T>().ToListAsync()).AsQueryable();
+
 
         public async Task<IQueryable<T>> FindByCondition(Expression<Func<T, bool>> expression,
             bool trackChanges) =>
             !trackChanges
-                ? _context.Set<T>()
+                ? ( await _context.Set<T>()
                     .Where(expression)
-                    .AsNoTracking()
-                : _context.Set<T>()
-                    .Where(expression);
+                    .AsNoTracking().ToListAsync()).AsQueryable()
+                : (await _context.Set<T>()
+                    .Where(expression).ToListAsync()).AsQueryable();
 
-        public void Create(T entity) =>_context.Set<T>().Add(entity);
+        public async Task Create(T entity) =>await _context.Set<T>().AddAsync(entity);
         public void Update(T entity) => _context.Set<T>().Update(entity);
         public void Delete(T entity) => _context.Set<T>().Remove(entity);
 

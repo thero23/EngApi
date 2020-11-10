@@ -6,10 +6,10 @@ using EnglishApi.Models;
 
 namespace EnglishApi.Data.Interfaces
 {
-    interface ISectionRepository:IBaseRepository<Section>
+    public interface ISectionRepository:IBaseRepository<Section>
     {
         Task AddUserToSection(User user, Section section);
-        Task AddSubsectionToSection(Subsection subsection, Section section);
+        void AddSubsectionToSection(Subsection subsection, Section section);
         bool IsSubsectionInSection(Subsection subsection, Section section);
         Task DeleteUserFromSection(User user, Section section);
         Task<bool> IsHasAccess(User user, Section section);

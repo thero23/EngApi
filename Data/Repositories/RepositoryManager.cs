@@ -12,6 +12,7 @@ namespace EnglishApi.Data.Repositories
         private IWordRepository _wordRepository;
         private IDictionaryRepository _dictionaryRepository;
         private IDictionaryWordRepository _dictionaryWordRepository;
+        private ISectionRepository _sectionRepository;
 
         public RepositoryManager(EnglishContext context)
         {
@@ -45,6 +46,16 @@ namespace EnglishApi.Data.Repositories
                 if (_dictionaryWordRepository == null)
                     _dictionaryWordRepository = new DictionaryWordRepository(_context);
                 return _dictionaryWordRepository;
+            }
+        }
+
+        public ISectionRepository Section
+        {
+            get
+            {
+                if (_sectionRepository == null)
+                    _sectionRepository = new SectionRepository(_context);
+                return _sectionRepository;
             }
         }
 
