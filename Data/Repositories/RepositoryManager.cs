@@ -48,6 +48,6 @@ namespace EnglishApi.Data.Repositories
             }
         }
 
-        public async Task Save() =>await _context.SaveChangesAsync();
+        public async Task Save() => await _context.SaveChangesAsync();
     }
 }

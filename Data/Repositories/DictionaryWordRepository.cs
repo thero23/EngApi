@@ -24,7 +24,7 @@ namespace EnglishApi.Data.Repositories
             return await _context.Words.Where(p => wordsId.Contains(p.Id)).ToListAsync();
         }
 
-        public async Task AddWordToDictionary(Word word, Dictionary dictionary)
+        public void AddWordToDictionary(Word word, Dictionary dictionary)
         {
             
                 var item = new DictionaryWord
@@ -33,12 +33,12 @@ namespace EnglishApi.Data.Repositories
                     DictionaryId = dictionary.Id
                 };
 
-               await _context.DictionaryWords.AddAsync(item);
+               _context.DictionaryWords.Add(item);
                 
 
         }
 
-        public async Task RemoveWordFromDictionary(Word word, Dictionary dictionary)
+        public void RemoveWordFromDictionary(Word word, Dictionary dictionary)
         {
             var item = _context.DictionaryWords.FirstOrDefault(p => p.Dictionary == dictionary && p.Word == word);
            

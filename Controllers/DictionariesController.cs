@@ -70,7 +70,7 @@ namespace EnglishApi.Controllers
         {
            
             var word = _mapper.Map<Word>(wordDto);
-            await _repository.Word.Create(word);
+             _repository.Word.Create(word);
             await _repository.Save();
             return CreatedAtRoute(nameof(GetWordById), new { word.Id }, word);
 
@@ -85,7 +85,7 @@ namespace EnglishApi.Controllers
             {
                 return BadRequest();
             } 
-            await _repository.Word.Delete(item);
+            _repository.Word.Delete(item);
             await _repository.Save();
             return Ok();
         }
@@ -100,7 +100,7 @@ namespace EnglishApi.Controllers
             }
 
             var word = _mapper.Map<Word>(wordDto);
-            await _repository.Word.Update(word);
+            _repository.Word.Update(word);
             await _repository.Save();
             return Ok();
         }
@@ -141,7 +141,7 @@ namespace EnglishApi.Controllers
                 return NotFound();
             }
             var dictionary = _mapper.Map<Dictionary>(dictionaryDto);
-            await _repository.Dictionary.Create(dictionary);
+            _repository.Dictionary.Create(dictionary);
             await _repository.Save();
             return CreatedAtRoute(nameof(GetDictionaryById), new { dictionary.Id }, dictionary);
 
@@ -153,7 +153,7 @@ namespace EnglishApi.Controllers
         {
 
             var dictionary = _mapper.Map<Dictionary>(dictionaryDto);
-            await _repository.Dictionary.Update(dictionary);
+            _repository.Dictionary.Update(dictionary);
             await _repository.Save();
             return Ok();
         }
@@ -168,7 +168,7 @@ namespace EnglishApi.Controllers
                 _logger.LogInfo($"Dictionary with Id {id} doesn't exist in the database.");
                 return BadRequest();
             }
-            await _repository.Dictionary.Delete(item);
+            _repository.Dictionary.Delete(item);
             await _repository.Save();
             return Ok();
         }
@@ -222,7 +222,7 @@ namespace EnglishApi.Controllers
                 return BadRequest();
             }
 
-            await _repository.DictionaryWord.AddWordToDictionary(word,dictionary);
+            _repository.DictionaryWord.AddWordToDictionary(word,dictionary);
             await _repository.Save();
             return Ok();
 
@@ -256,7 +256,7 @@ namespace EnglishApi.Controllers
                 return BadRequest();
             }
 
-            await _repository.DictionaryWord.RemoveWordFromDictionary(word, dictionary);
+            _repository.DictionaryWord.RemoveWordFromDictionary(word, dictionary);
             await _repository.Save();
             return NoContent();
         }

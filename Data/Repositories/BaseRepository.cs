@@ -34,9 +34,9 @@ namespace EnglishApi.Data.Repositories
                 : _context.Set<T>()
                     .Where(expression);
 
-        public async Task Create(T entity) =>await _context.Set<T>().AddAsync(entity);
-        public async Task Update(T entity) => _context.Set<T>().Update(entity);
-        public async Task Delete(T entity) => _context.Set<T>().Remove(entity);
+        public void Create(T entity) =>_context.Set<T>().Add(entity);
+        public void Update(T entity) => _context.Set<T>().Update(entity);
+        public void Delete(T entity) => _context.Set<T>().Remove(entity);
 
     }
 
