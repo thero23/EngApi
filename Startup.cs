@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using AutoMapper;
 using EnglishApi.Data;
 using EnglishApi.Data.Interfaces;
 using EnglishApi.Data.Repositories;
@@ -36,6 +38,9 @@ namespace EnglishApi
             services.AddScoped<IRepositoryManager,RepositoryManager>();
             services.AddScoped<ILoggerManager, LoggerManager>();
 
+            
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
             services.AddControllers();
         }
@@ -48,9 +53,11 @@ namespace EnglishApi
                 app.UseDeveloperExceptionPage();
             }
 
+           
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCors("CorsPolicy");
+            
+
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.All

@@ -11,10 +11,9 @@ namespace EnglishApi.Data.Repositories
 {
     public class SectionRepository:BaseRepository<Section>,ISectionRepository
     {
-        private readonly EnglishContext _context; //сомнительно
+        
         public SectionRepository(EnglishContext context) : base(context)
         {
-            _context = context;
         }
 
         public async Task AddUserToSection(User user, Section section)
@@ -22,9 +21,7 @@ namespace EnglishApi.Data.Repositories
             var item = new SectionUser()
             {
                 SectionId = section.Id,
-                Section =  section,
-                UserId = user.Id,
-                User = user
+                UserId = user.Id
             };
 
             await _context.SectionUsers.AddAsync(item);

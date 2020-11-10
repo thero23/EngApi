@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using EnglishApi.Contracts;
+using AutoMapper;
 using EnglishApi.Data;
 using EnglishApi.Data.Interfaces;
 using EnglishApi.Data.Repositories;
+using EnglishApi.DTOs;
 using EnglishApi.Logger;
 using EnglishApi.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace EnglishApi.Controllers
 {
@@ -20,51 +23,53 @@ namespace EnglishApi.Controllers
     {
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
+        private readonly IMapper _mapper;
 
 
 
-        public DictionariesController(IRepositoryManager repository, ILoggerManager logger)
+        public DictionariesController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
         {
 
             _repository = repository;
             _logger = logger;
+            _mapper = mapper;
 
         }
 
-
-        //Words
-        // api/dictionaries/words/...
-
-        //_logger.LogInfo("Here is info message from our values controller.");
-        //_logger.LogDebug("Here is debug message from our values controller.");
-        //_logger.LogWarn("Here is warn message from our values controller.");
-        //_logger.LogError("Here is an error message from our values controller.");
 
         [HttpGet]
         [Route("words")]
         public ActionResult<IEnumerable<Word>> GetAllWords()
         {
-            var items = _repository.Word.FindAll(false);
-             return Ok(items);
+            throw new Exception("Exeption");
+
+            var words = _repository.Word.FindAll(false);
+            var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
+            return Ok(wordsDto);
 
             
         }
 
         [HttpGet]
         [Route("words/{id}", Name = "GetWordById")]
-        public ActionResult<Word> GetWordById(Guid id)
+        public ActionResult<WordGetDto> GetWordById(Guid id)
         {
-            return Ok(_repository.Word.FindByCondition(p=>p.Id == id, false));
+            var word = _repository.Word.FindByCondition(p => p.Id == id, false).FirstOrDefault();
+            if (word == null)
+            {
+                _logger.LogInfo($"Word with Id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+            var wordDto = _mapper.Map<WordGetDto>(word);
+            return Ok(wordDto);
         }
 
         [HttpPost]
         [Route("words", Name = "AddWord")]
-        public IActionResult AddWord([FromBody] Word word)
+        public IActionResult AddWord([FromBody] WordCreateDto wordDto)
         {
-            if (word == null)
-            {
-                return NotFound();
-            }
+           
+            var word = _mapper.Map<Word>(wordDto);
             _repository.Word.Create(word);
             _repository.Save();
             return CreatedAtRoute(nameof(GetWordById), new { word.Id }, word);
@@ -87,12 +92,14 @@ namespace EnglishApi.Controllers
 
         [HttpPut]
         [Route("words", Name = "UpdateWord")]
-        public IActionResult UpdateWord([FromBody] Word word)
+        public IActionResult UpdateWord([FromBody] WordUpdateDto wordDto)
         {
-            if (word == null)
+            if (wordDto == null)
             {
                 return BadRequest();
             }
+
+            var word = _mapper.Map<Word>(wordDto);
             _repository.Word.Update(word);
             _repository.Save();
             return Ok();
@@ -105,29 +112,49 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("", Name = "GetAllDictionaries")]
-        public ActionResult<IEnumerable<Dictionary>> GetAllDictionaries()
+        public ActionResult<IEnumerable<DictionaryGetDto>> GetAllDictionaries()
         {
-            return Ok(_repository.Dictionary.FindAll(false));
+            var dictionaries = _repository.Dictionary.FindAll(false);
+            var dictionariesDto = _mapper.Map<IEnumerable<DictionaryGetDto>>(dictionaries);
+            return Ok(dictionariesDto);
         }
 
         [HttpGet]
         [Route("{id}", Name = "GetDictionaryById")]
         public ActionResult<Dictionary> GetDictionaryById(Guid id)
         {
-            return Ok(_repository.Dictionary.FindByCondition(p=>p.Id==id,false));
+            var item = _repository.Dictionary.FindByCondition(p => p.Id == id, false);
+            if (item == null)
+            {
+                _logger.LogInfo($"Dictionary with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+            return Ok();
         }
 
         [HttpPost]
         [Route("", Name = "AddDictionary")]
-        public IActionResult AddDictionary([FromBody] Dictionary dictionary)
+        public IActionResult AddDictionary([FromBody] DictionaryCreateDto dictionaryDto)
         {
-            if (dictionary == null)
+            if (dictionaryDto == null)
             {
                 return NotFound();
             }
+            var dictionary = _mapper.Map<Dictionary>(dictionaryDto);
             _repository.Dictionary.Create(dictionary);
             return CreatedAtRoute(nameof(GetDictionaryById), new { dictionary.Id }, dictionary);
 
+        }
+
+        [HttpPut]
+        [Route("", Name = "UpdateDictionary")]
+        public IActionResult UpdateDictionary([FromBody] DictionaryUpdateDto dictionaryDto)
+        {
+
+            var dictionary = _mapper.Map<Dictionary>(dictionaryDto);
+            _repository.Dictionary.Update(dictionary);
+            _repository.Save();
+            return Ok();
         }
 
         [HttpDelete]
@@ -137,6 +164,7 @@ namespace EnglishApi.Controllers
             var item = _repository.Dictionary.FindByCondition(p => p.Id == id, true).FirstOrDefault();
             if (item == null)
             {
+                _logger.LogInfo($"Dictionary with Id {id} doesn't exist in the database.");
                 return BadRequest();
             }
             _repository.Dictionary.Delete(item);
@@ -151,14 +179,17 @@ namespace EnglishApi.Controllers
         [Route("{id}/words", Name = "GetWordsFromDictionary")]
         public ActionResult<IEnumerable<Word>> GetWordsFromDictionary(Guid id)
         {
-            var item = _repository.Dictionary.FindByCondition(p => p.Id == id, false).FirstOrDefault();
+            var dictionary = _repository.Dictionary.FindByCondition(p => p.Id == id, false).FirstOrDefault();
 
-            if (item == null)
+            if (dictionary == null)
             {
+                _logger.LogInfo($"Dictionary with id: {id} doesn't exist in database");
                 return NotFound();
             }
 
-            return Ok(_repository.DictionaryWord.GetWordsFromDictionary(item));
+            var words = (_repository.DictionaryWord.GetWordsFromDictionary(dictionary));
+            var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
+            return Ok(wordsDto);
 
         }
 
@@ -169,13 +200,23 @@ namespace EnglishApi.Controllers
             var dictionary = _repository.Dictionary.FindByCondition(p=>p.Id == dictionaryId, false).FirstOrDefault();
             var word = _repository.Word.FindByCondition(p => p.Id == wordId, false).FirstOrDefault();
 
-            if (word == null || dictionary == null)
+            if (word == null )
             {
+                _logger.LogInfo($"Word with id: {wordId} doesn't exist in database");
+
+                return NotFound();
+            }
+
+            if (dictionary == null)
+            {
+                _logger.LogInfo($"Dictionary with id: {dictionaryId} doesn't exist in database");
                 return NotFound();
             }
 
             if (_repository.DictionaryWord.IsWordInDictionary(word, dictionary))
             {
+                _logger.LogInfo($"This word already exist in dictionary");
+
                 return BadRequest();
             }
 
@@ -193,12 +234,23 @@ namespace EnglishApi.Controllers
             var dictionary = _repository.Dictionary.FindByCondition(p => p.Id == dictionaryId, false).FirstOrDefault();
             var word = _repository.Word.FindByCondition(p => p.Id == wordId, false).FirstOrDefault();
 
-            if (word == null || dictionary == null)
+            if (word == null)
             {
+                _logger.LogInfo($"Word with id: {wordId} doesn't exist in database");
+
                 return NotFound();
             }
+
+            if (dictionary == null)
+            {
+                _logger.LogInfo($"Dictionary with id: {dictionaryId} doesn't exist in database");
+                return NotFound();
+            }
+
             if (!_repository.DictionaryWord.IsWordInDictionary(word, dictionary))
             {
+                _logger.LogInfo($"Word with id: {wordId} doesn't  exist in dictionary with id: {dictionaryId}");
+
                 return BadRequest();
             }
 
