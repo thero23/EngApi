@@ -10,6 +10,6 @@ namespace EnglishApi.Data.Interfaces
         IDictionaryRepository Dictionary { get; }
         IWordRepository Word { get; }
         IDictionaryWordRepository DictionaryWord { get; }
-        void Save();
+        Task Save();
     }
 }

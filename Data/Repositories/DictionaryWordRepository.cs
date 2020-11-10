@@ -16,15 +16,15 @@ namespace EnglishApi.Data.Repositories
         {
             _context = context;
         }
-        public  IEnumerable<Word> GetWordsFromDictionary(Dictionary dictionary)
+        public async Task<IEnumerable<Word>> GetWordsFromDictionary(Dictionary dictionary)
         {
-            var wordsId = _context.DictionaryWords.Where(p => p.DictionaryId == dictionary.Id).ToList().Select(p => p.WordId).ToList();
+            var wordsId =(await _context.DictionaryWords.Where(p => p.DictionaryId == dictionary.Id).ToListAsync()).Select(p => p.WordId).ToList();
+            
 
-
-            return _context.Words.Where(p => wordsId.Contains(p.Id)).ToList();
+            return await _context.Words.Where(p => wordsId.Contains(p.Id)).ToListAsync();
         }
 
-        public void AddWordToDictionary(Word word, Dictionary dictionary)
+        public async Task AddWordToDictionary(Word word, Dictionary dictionary)
         {
             
                 var item = new DictionaryWord
@@ -33,23 +33,23 @@ namespace EnglishApi.Data.Repositories
                     DictionaryId = dictionary.Id
                 };
 
-                _context.DictionaryWords.Add(item);
+               await _context.DictionaryWords.AddAsync(item);
                 
 
         }
 
-        public void RemoveWordFromDictionary(Word word, Dictionary dictionary)
+        public async Task RemoveWordFromDictionary(Word word, Dictionary dictionary)
         {
             var item = _context.DictionaryWords.FirstOrDefault(p => p.Dictionary == dictionary && p.Word == word);
            
-            _context.DictionaryWords.Remove(item);
+              _context.DictionaryWords.Remove(item);
             
 
         }
 
         public bool IsWordInDictionary(Word word, Dictionary dictionary)
         {
-            return _context.DictionaryWords.Any(p => p.DictionaryId == dictionary.Id && p.WordId == word.Id);
+            return  _context.DictionaryWords.Any(p => p.DictionaryId == dictionary.Id && p.WordId == word.Id);
 
 
            

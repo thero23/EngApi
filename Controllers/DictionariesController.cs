@@ -39,11 +39,10 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("words")]
-        public ActionResult<IEnumerable<Word>> GetAllWords()
+        public async Task<ActionResult<IEnumerable<Word>>> GetAllWords()
         {
-            throw new Exception("Exeption");
-
-            var words = _repository.Word.FindAll(false);
+           
+            var words = await _repository.Word.FindAll(false);
             var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
             return Ok(wordsDto);
 
@@ -52,9 +51,10 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("words/{id}", Name = "GetWordById")]
-        public ActionResult<WordGetDto> GetWordById(Guid id)
+        public async Task<ActionResult<WordGetDto>> GetWordById(Guid id)
         {
-            var word = _repository.Word.FindByCondition(p => p.Id == id, false).FirstOrDefault();
+            var word = (await _repository.Word.FindByCondition(p => p.Id == id, false)).FirstOrDefault();
+            
             if (word == null)
             {
                 _logger.LogInfo($"Word with Id: {id} doesn't exist in the database.");
@@ -66,33 +66,33 @@ namespace EnglishApi.Controllers
 
         [HttpPost]
         [Route("words", Name = "AddWord")]
-        public IActionResult AddWord([FromBody] WordCreateDto wordDto)
+        public async Task<IActionResult> AddWord([FromBody] WordCreateDto wordDto)
         {
            
             var word = _mapper.Map<Word>(wordDto);
-            _repository.Word.Create(word);
-            _repository.Save();
+            await _repository.Word.Create(word);
+            await _repository.Save();
             return CreatedAtRoute(nameof(GetWordById), new { word.Id }, word);
 
         }
 
         [HttpDelete]
         [Route("words/{id}", Name = "DeleteWord")]
-        public IActionResult DeleteWord(Guid id)
+        public async Task<IActionResult> DeleteWord(Guid id)
         {
-            var item = _repository.Word.FindByCondition(p=>p.Id == id,true);
+            var item = (await _repository.Word.FindByCondition(p=>p.Id == id,true)).First();
             if (item == null)
             {
                 return BadRequest();
-            }
-            _repository.Word.Delete(item.First());
-            _repository.Save();
+            } 
+            await _repository.Word.Delete(item);
+            await _repository.Save();
             return Ok();
         }
 
         [HttpPut]
         [Route("words", Name = "UpdateWord")]
-        public IActionResult UpdateWord([FromBody] WordUpdateDto wordDto)
+        public async Task<IActionResult> UpdateWord([FromBody] WordUpdateDto wordDto)
         {
             if (wordDto == null)
             {
@@ -100,8 +100,8 @@ namespace EnglishApi.Controllers
             }
 
             var word = _mapper.Map<Word>(wordDto);
-            _repository.Word.Update(word);
-            _repository.Save();
+            await _repository.Word.Update(word);
+            await _repository.Save();
             return Ok();
         }
 
@@ -112,18 +112,18 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("", Name = "GetAllDictionaries")]
-        public ActionResult<IEnumerable<DictionaryGetDto>> GetAllDictionaries()
+        public async Task<ActionResult<IEnumerable<DictionaryGetDto>>> GetAllDictionaries()
         {
-            var dictionaries = _repository.Dictionary.FindAll(false);
+            var dictionaries =await _repository.Dictionary.FindAll(false);
             var dictionariesDto = _mapper.Map<IEnumerable<DictionaryGetDto>>(dictionaries);
             return Ok(dictionariesDto);
         }
 
         [HttpGet]
         [Route("{id}", Name = "GetDictionaryById")]
-        public ActionResult<Dictionary> GetDictionaryById(Guid id)
+        public async Task<ActionResult<Dictionary>> GetDictionaryById(Guid id)
         {
-            var item = _repository.Dictionary.FindByCondition(p => p.Id == id, false);
+            var item =await _repository.Dictionary.FindByCondition(p => p.Id == id, false);
             if (item == null)
             {
                 _logger.LogInfo($"Dictionary with id: {id} doesn't exist in the database.");
@@ -134,40 +134,42 @@ namespace EnglishApi.Controllers
 
         [HttpPost]
         [Route("", Name = "AddDictionary")]
-        public IActionResult AddDictionary([FromBody] DictionaryCreateDto dictionaryDto)
+        public async Task<IActionResult> AddDictionary([FromBody] DictionaryCreateDto dictionaryDto)
         {
             if (dictionaryDto == null)
             {
                 return NotFound();
             }
             var dictionary = _mapper.Map<Dictionary>(dictionaryDto);
-            _repository.Dictionary.Create(dictionary);
+            await _repository.Dictionary.Create(dictionary);
+            await _repository.Save();
             return CreatedAtRoute(nameof(GetDictionaryById), new { dictionary.Id }, dictionary);
 
         }
 
         [HttpPut]
         [Route("", Name = "UpdateDictionary")]
-        public IActionResult UpdateDictionary([FromBody] DictionaryUpdateDto dictionaryDto)
+        public async Task<IActionResult> UpdateDictionary([FromBody] DictionaryUpdateDto dictionaryDto)
         {
 
             var dictionary = _mapper.Map<Dictionary>(dictionaryDto);
-            _repository.Dictionary.Update(dictionary);
-            _repository.Save();
+            await _repository.Dictionary.Update(dictionary);
+            await _repository.Save();
             return Ok();
         }
 
         [HttpDelete]
         [Route("{id}", Name = "DeleteDictionary")]
-        public IActionResult DeleteDictionary(Guid id)
+        public async Task<IActionResult> DeleteDictionary(Guid id)
         {
-            var item = _repository.Dictionary.FindByCondition(p => p.Id == id, true).FirstOrDefault();
+            var item = (await _repository.Dictionary.FindByCondition(p => p.Id == id, true)).FirstOrDefault();
             if (item == null)
             {
                 _logger.LogInfo($"Dictionary with Id {id} doesn't exist in the database.");
                 return BadRequest();
             }
-            _repository.Dictionary.Delete(item);
+            await _repository.Dictionary.Delete(item);
+            await _repository.Save();
             return Ok();
         }
 
@@ -177,9 +179,9 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("{id}/words", Name = "GetWordsFromDictionary")]
-        public ActionResult<IEnumerable<Word>> GetWordsFromDictionary(Guid id)
+        public async Task<ActionResult<IEnumerable<Word>>> GetWordsFromDictionary(Guid id)
         {
-            var dictionary = _repository.Dictionary.FindByCondition(p => p.Id == id, false).FirstOrDefault();
+            var dictionary = (await _repository.Dictionary.FindByCondition(p => p.Id == id, false)).FirstOrDefault();
 
             if (dictionary == null)
             {
@@ -187,7 +189,7 @@ namespace EnglishApi.Controllers
                 return NotFound();
             }
 
-            var words = (_repository.DictionaryWord.GetWordsFromDictionary(dictionary));
+            var words = (await _repository.DictionaryWord.GetWordsFromDictionary(dictionary));
             var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
             return Ok(wordsDto);
 
@@ -195,10 +197,10 @@ namespace EnglishApi.Controllers
 
         [HttpPost]
         [Route("{dictionaryId}/words/{wordId}", Name = "AddWordToDictionary")]
-        public IActionResult AddWordToDictionary(Guid dictionaryId, Guid wordId)
+        public async Task<IActionResult> AddWordToDictionary(Guid dictionaryId, Guid wordId)
         {
-            var dictionary = _repository.Dictionary.FindByCondition(p=>p.Id == dictionaryId, false).FirstOrDefault();
-            var word = _repository.Word.FindByCondition(p => p.Id == wordId, false).FirstOrDefault();
+            var dictionary = (await _repository.Dictionary.FindByCondition(p=>p.Id == dictionaryId, false)).FirstOrDefault();
+            var word = (await _repository.Word.FindByCondition(p => p.Id == wordId, false)).FirstOrDefault();
 
             if (word == null )
             {
@@ -220,8 +222,8 @@ namespace EnglishApi.Controllers
                 return BadRequest();
             }
 
-            _repository.DictionaryWord.AddWordToDictionary(word,dictionary);
-            _repository.Save();
+            await _repository.DictionaryWord.AddWordToDictionary(word,dictionary);
+            await _repository.Save();
             return Ok();
 
         }
@@ -229,10 +231,10 @@ namespace EnglishApi.Controllers
 
         [HttpDelete]
         [Route("{dictionaryId}/words/{wordId}", Name = "RemoveWordFromDictionary")]
-        public IActionResult RemoveWordFromDictionary(Guid wordId, Guid dictionaryId)
+        public async Task<IActionResult> RemoveWordFromDictionary(Guid wordId, Guid dictionaryId)
         {
-            var dictionary = _repository.Dictionary.FindByCondition(p => p.Id == dictionaryId, false).FirstOrDefault();
-            var word = _repository.Word.FindByCondition(p => p.Id == wordId, false).FirstOrDefault();
+            var dictionary =(await _repository.Dictionary.FindByCondition(p => p.Id == dictionaryId, false)).FirstOrDefault();
+            var word =(await _repository.Word.FindByCondition(p => p.Id == wordId, false)).FirstOrDefault();
 
             if (word == null)
             {
@@ -254,8 +256,8 @@ namespace EnglishApi.Controllers
                 return BadRequest();
             }
 
-            _repository.DictionaryWord.RemoveWordFromDictionary(word, dictionary);
-            _repository.Save();
+            await _repository.DictionaryWord.RemoveWordFromDictionary(word, dictionary);
+            await _repository.Save();
             return NoContent();
         }
     }

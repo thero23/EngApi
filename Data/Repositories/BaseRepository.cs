@@ -19,13 +19,13 @@ namespace EnglishApi.Data.Repositories
         }
 
 
-        public IQueryable<T> FindAll(bool trackChanges) =>
+        public async Task<IQueryable<T>> FindAll(bool trackChanges) =>
             !trackChanges
                 ? _context.Set<T>()
                     .AsNoTracking()
                 : _context.Set<T>();
 
-        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression,
+        public async Task<IQueryable<T>> FindByCondition(Expression<Func<T, bool>> expression,
             bool trackChanges) =>
             !trackChanges
                 ? _context.Set<T>()
@@ -34,9 +34,9 @@ namespace EnglishApi.Data.Repositories
                 : _context.Set<T>()
                     .Where(expression);
 
-        public void Create(T entity) => _context.Set<T>().Add(entity);
-        public virtual void Update(T entity) => _context.Set<T>().Update(entity);
-        public void Delete(T entity) => _context.Set<T>().Remove(entity);
+        public async Task Create(T entity) =>await _context.Set<T>().AddAsync(entity);
+        public async Task Update(T entity) => _context.Set<T>().Update(entity);
+        public async Task Delete(T entity) => _context.Set<T>().Remove(entity);
 
     }
 
