@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using AutoMapper;
 using EnglishApi.Data.Interfaces;
@@ -38,7 +39,7 @@ namespace EnglishApi.Controllers
         [Route("", Name = "GetAllSections")]
         public async Task<IActionResult> GetAllSections()
         {
-            var sections = (await _repository.Section.FindAll(false)).Include(p=>p.Subsections);
+            var sections = (await _repository.Section.FindAll(false));
 
             return Ok(sections);
         }
@@ -48,30 +49,161 @@ namespace EnglishApi.Controllers
         [Route("{id}", Name = "GetSectionById")]
         public async Task<IActionResult> GetSectionById(Guid id)
         {
-            //убрать инклюды  и переопределить и методы на них
-            var section = (await _repository.Section.FindByCondition(p=>p.Id == id,false)).Include(p=>p.Subsections);
+            
+            var section = (await _repository.Section.FindByCondition(p=>p.Id == id,false));
            
             return Ok(section);
         }
 
-        [HttpGet]
-        [Route("subsections", Name = "GetAllSubsections")]
-        public async Task<IActionResult> GetAllSubsections()
+        [HttpPost]
+        [Route("", Name = "AddSection")]
+        public async Task<IActionResult> AddSection([FromBody] Section section)
         {
-         
-            var sections = (await _repository.Subsection.FindAll(false)).Include(p=>p.Section);
-
-            return Ok(sections);
+            await _repository.Section.Create(section);
+            await _repository.Save();
+            return CreatedAtRoute(nameof(GetSectionById), section.Id, section);
         }
 
-        [HttpGet]
-        [Route("subsections/{id}", Name = "GetSubsectionById")]
-        public async Task<IActionResult> GetSubsectionById(Guid id)
+        [HttpDelete]
+        [Route("{id}", Name = "DeleteSection")]
+        public async Task<IActionResult> DeleteSection(Guid id)
         {
-            var subsection = (await _repository.Subsection.FindByCondition(p => p.Id == id, false)).Include(p=>p.Section);
+            var  section =(await _repository.Section.FindByCondition(p=>p.Id==id,true)).FirstOrDefault();
+            if (section == null)
+            {
+                return NotFound();
+            }
+
+            _repository.Section.Delete(section);
+            await _repository.Save();
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("", Name = "UpdateSection")]
+        public async Task<IActionResult> UpdateSection([FromBody] Section section)
+        {
+            _repository.Section.Update(section);
+            await _repository.Save();
+            return Ok(section);
+        }
+
+        [HttpPost]
+        [Route("{sectionId}/subsections/{subsectionId}", Name = "AddSubsectionToSection")]
+        public async Task<IActionResult> AddSubsectionToSection(Guid sectionId, Guid subsectionId)
+        {
+            var section = (await _repository.Section.FindByCondition(p=>p.Id == sectionId,false)).FirstOrDefault();
+            var subsection = (await _repository.Subsection.FindByCondition(p=>p.Id==subsectionId,false)).FirstOrDefault();
+
+            if (section == null)
+            {
+                return NotFound();
+
+            }
+
+            if (subsection == null)
+            {
+                return NotFound();
+            }
+
+            if (_repository.Section.IsSubsectionInSection(subsection, section))
+            {
+                return BadRequest();
+            }
+            _repository.Section.AddSubsectionToSection(subsection,section);
+            await _repository.Save();
+            return Ok();
+        }
+
+        
+
+
+        [HttpPost]
+        [Route("{sectionId}/users/{userId}", Name = "AddUserToSection")]
+        public async Task<IActionResult> AddUserToSection(Guid sectionId, Guid userId)
+        {
             
+            var section = (await _repository.Section.FindByCondition(p => p.Id == sectionId, false)).FirstOrDefault();
+            var user = (await _repository.User.FindByCondition(p => p.Id == userId, false)).FirstOrDefault();
 
-            return Ok(subsection);
+            if (section == null)
+            {
+                return NotFound();
+
+            }
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (_repository.Section.IsHasAccess(user, section).Result)
+            {
+                BadRequest();
+            }
+
+            await _repository.Section.AddUserToSection(user, section);
+            await _repository.Save();
+            return Ok();
         }
+
+        [HttpDelete]
+        [Route("{sectionId}/users/{userId}", Name = "DeleteUserFromSection")]
+        public async Task<IActionResult> DeleteUserFromSection(Guid sectionId, Guid userId)
+        {
+            var section = (await _repository.Section.FindByCondition(p => p.Id == sectionId, false)).FirstOrDefault();
+            var user = (await _repository.User.FindByCondition(p => p.Id ==userId, false)).FirstOrDefault();
+
+            if (section == null)
+            {
+                return NotFound();
+
+            }
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (!_repository.Section.IsHasAccess(user, section).Result)
+            {
+                return BadRequest();
+            }
+            await _repository.Section.DeleteUserFromSection(user, section);
+            await _repository.Save();
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("{sectionId}/dictionaries/{dictionaryId}", Name = "AddDictionaryToSection")]
+        public async Task<IActionResult> AddDictionaryToSection(Guid sectionId, Guid dictionaryId)
+        {
+
+            var section = (await _repository.Section.FindByCondition(p => p.Id == sectionId, false)).FirstOrDefault();
+            var dictionary = (await _repository.Dictionary.FindByCondition(p => p.Id == dictionaryId, false)).FirstOrDefault();
+
+            if (section == null)
+            {
+                return NotFound();
+
+            }
+
+            if (dictionary == null)
+            {
+                return NotFound();
+            }
+
+            if (_repository.Section.IsDictionaryInSection(dictionary, section).Result)
+            {
+                BadRequest();
+            }
+
+            await _repository.Section.AddDictionaryToSection(dictionary, section);
+            await _repository.Save();
+            return Ok();
+        }
+
+
+
     }
 }

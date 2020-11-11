@@ -14,6 +14,9 @@ namespace EnglishApi.Data.Interfaces
         IDictionaryWordRepository DictionaryWord { get; }
         ISectionRepository Section { get; }
         ISubsectionRepository Subsection { get; }
+        IUserRepository User { get; }
+
+
         Task Save();
     }
 }

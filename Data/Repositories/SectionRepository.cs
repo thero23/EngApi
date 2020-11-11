@@ -42,6 +42,12 @@ namespace EnglishApi.Data.Repositories
             return subsection.SectionId.Equals(section.Id);
         }
 
+        public Task DeleteSubsectionFromSection(Subsection subsection, Section section)
+        {
+            throw new NotImplementedException();
+
+        }
+
         public async Task DeleteUserFromSection(User user, Section section)
         {
             var item = await _context.SectionUsers.SingleOrDefaultAsync(p => p.SectionId == section.Id && p.UserId == user.Id);
@@ -65,6 +71,11 @@ namespace EnglishApi.Data.Repositories
             };
 
             await _context.SectionDictionaries.AddAsync(item);
+        }
+
+        public Task DeleteDictionaryFromSection(Dictionary dictionary, Section section)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<bool> IsDictionaryInSection(Dictionary dictionary, Section section)
