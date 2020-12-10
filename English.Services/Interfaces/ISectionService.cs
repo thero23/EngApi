@@ -10,8 +10,8 @@ namespace English.Services.Interfaces
 {
     public interface ISectionService
     {
-        Task<IQueryable<Section>> FindAllSections(bool trackChanges);
-        Task<IQueryable<Section>> FindSectionByCondition(Expression<Func<Section, bool>> expression,
+        IQueryable<Section> FindAllSections(bool trackChanges);
+        IQueryable<Section> FindSectionByCondition(Expression<Func<Section, bool>> expression,
             bool trackChanges);
         Task CreateSection(Section entity);
         void UpdateSection(Section entity);
@@ -31,10 +31,10 @@ namespace English.Services.Interfaces
         Task<bool> IsDictionaryInSection(Guid dictionaryId, Guid sectionId);
 
 
-        Task<bool> IsSectionExist( Guid id);
-        Task<bool> IsSubsectionExist(Guid id);
-        Task<bool> IsUserExist(Guid id);
-        Task<bool> IsDictionaryExist(Guid id);
+        bool IsSectionExist( Guid id);
+        bool IsSubsectionExist(Guid id);
+        bool IsUserExist(Guid id);
+        bool IsDictionaryExist(Guid id);
        
 
         public Task Save();

@@ -43,7 +43,7 @@ namespace EnglishApi.Controllers
         public async Task<IActionResult> GetAllWords()
         {
            
-            var words = await _service.FindAllWords(false);
+            var words =  _service.FindAllWords(false);
             var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
             return Ok(wordsDto);
 
@@ -52,9 +52,9 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("words/{id}", Name = "GetWordById")]
-        public async Task<IActionResult> GetWordById(Guid id)
+        public IActionResult GetWordById(Guid id)
         {
-            var word = (await _service.FindWordByCondition(p => p.Id == id, false)).FirstOrDefault();
+            var word = _service.FindWordByCondition(p => p.Id == id, false).FirstOrDefault();
             
             if (word == null)
             {
@@ -81,7 +81,7 @@ namespace EnglishApi.Controllers
         [Route("words/{id}", Name = "DeleteWord")]
         public async Task<IActionResult> DeleteWord(Guid id)
         {
-            var item = (await _service.FindWordByCondition(p=>p.Id == id,true)).First();
+            var item = _service.FindWordByCondition(p=>p.Id == id,true).FirstOrDefault();
             if (item == null)
             {
                 return BadRequest();
@@ -115,7 +115,7 @@ namespace EnglishApi.Controllers
         [Route("", Name = "GetAllDictionaries")]
         public async Task<IActionResult> GetAllDictionaries()
         {
-            var dictionaries =await _service.FindAllDictionaries(false);
+            var dictionaries =_service.FindAllDictionaries(false);
             var dictionariesDto = _mapper.Map<IEnumerable<DictionaryGetDto>>(dictionaries);
             return Ok(dictionariesDto);
         }
@@ -124,7 +124,7 @@ namespace EnglishApi.Controllers
         [Route("{id}", Name = "GetDictionaryById")]
         public async Task<IActionResult> GetDictionaryById(Guid id)
         {
-            var item =await _service.FindDictionaryByCondition(p => p.Id == id, false);
+            var item = _service.FindDictionaryByCondition(p => p.Id == id, false);
             if (item == null)
             {
                 _logger.LogInfo($"Dictionary with id: {id} doesn't exist in the database.");
@@ -163,7 +163,7 @@ namespace EnglishApi.Controllers
         [Route("{id}", Name = "DeleteDictionary")]
         public async Task<IActionResult> DeleteDictionary(Guid id)
         {
-            var item = (await _service.FindDictionaryByCondition(p => p.Id == id, true)).FirstOrDefault();
+            var item = _service.FindDictionaryByCondition(p => p.Id == id, true).FirstOrDefault();
             if (item == null)
             {
                 _logger.LogInfo($"Dictionary with Id {id} doesn't exist in the database.");
@@ -183,7 +183,7 @@ namespace EnglishApi.Controllers
         public async Task<IActionResult> GetWordsFromDictionary(Guid id)
         {
 
-            var dictionary = (await _service.FindDictionaryByCondition(p => p.Id == id, false)).FirstOrDefault();
+            var dictionary =  _service.FindDictionaryByCondition(p => p.Id == id, false).FirstOrDefault();
 
             if (dictionary == null)
             {
@@ -201,8 +201,8 @@ namespace EnglishApi.Controllers
         [Route("{dictionaryId}/words/{wordId}", Name = "AddWordToDictionary")]
         public async Task<IActionResult> AddWordToDictionary(Guid dictionaryId, Guid wordId)
         {
-            var dictionary = (await _service.FindDictionaryByCondition(p=>p.Id == dictionaryId, false)).FirstOrDefault();
-            var word = (await _service.FindWordByCondition(p => p.Id == wordId, false)).FirstOrDefault();
+            var dictionary = _service.FindDictionaryByCondition(p=>p.Id == dictionaryId, false).FirstOrDefault();
+            var word = _service.FindWordByCondition(p => p.Id == wordId, false).FirstOrDefault();
 
             if (word == null )
             {
@@ -235,8 +235,8 @@ namespace EnglishApi.Controllers
         [Route("{dictionaryId}/words/{wordId}", Name = "RemoveWordFromDictionary")]
         public async Task<IActionResult> RemoveWordFromDictionary(Guid wordId, Guid dictionaryId)
         {
-            var dictionary =(await _service.FindDictionaryByCondition(p => p.Id == dictionaryId, false)).FirstOrDefault();
-            var word =(await _service.FindWordByCondition(p => p.Id == wordId, false)).FirstOrDefault();
+            var dictionary =_service.FindDictionaryByCondition(p => p.Id == dictionaryId, false).FirstOrDefault();
+            var word =_service.FindWordByCondition(p => p.Id == wordId, false).FirstOrDefault();
 
             if (word == null)
             {

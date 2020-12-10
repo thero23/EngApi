@@ -10,8 +10,8 @@ namespace English.Services.Interfaces
 {
     public interface ISubsectionService
     {
-        Task<IQueryable<Subsection>> FindAllSubsections(bool trackChanges);
-        Task<IQueryable<Subsection>> FindSubsectionByCondition(Expression<Func<Subsection, bool>> expression,
+        IQueryable<Subsection> FindAllSubsections(bool trackChanges);
+        IQueryable<Subsection> FindSubsectionByCondition(Expression<Func<Subsection, bool>> expression,
             bool trackChanges);
         Task CreateSubsection(Subsection entity);
         void UpdateSubsection(Subsection entity);

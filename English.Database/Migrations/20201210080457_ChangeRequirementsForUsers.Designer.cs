@@ -4,14 +4,16 @@ using English.Database.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace English.Database.Migrations
 {
     [DbContext(typeof(EnglishContext))]
-    partial class EnglishContextModelSnapshot : ModelSnapshot
+    [Migration("20201210080457_ChangeRequirementsForUsers")]
+    partial class ChangeRequirementsForUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -198,18 +200,6 @@ namespace English.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b00285f0-e579-4e0b-a3f1-794e574f54e2"),
-                            Name = "admin"
-                        },
-                        new
-                        {
-                            Id = new Guid("c2396ad9-9504-40f4-8a39-bbcb2ec8da8b"),
-                            Name = "user"
-                        });
                 });
 
             modelBuilder.Entity("English.Database.Models.Word", b =>

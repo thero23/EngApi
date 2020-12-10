@@ -18,6 +18,8 @@ namespace English.Services.Mappings
             CreateMap<WordCreateDto,Word >();
             CreateMap<WordUpdateDto,Word >();
 
+            CreateMap<User, UserWithRoleDTO>().ForMember("UserRoleName",opt=>opt.MapFrom(c=>c.UserRole.Name));
+
 
         }
 

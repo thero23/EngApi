@@ -17,21 +17,21 @@ namespace English.Database.Data.Repositories
         }
 
 
-        public async Task<IQueryable<T>> FindAll(bool trackChanges) =>
+        public IQueryable<T> FindAll(bool trackChanges) =>
             !trackChanges
-                ? (await _context.Set<T>()
-                    .AsNoTracking().ToListAsync()).AsQueryable()
-                : (await _context.Set<T>().ToListAsync()).AsQueryable();
+                ? _context.Set<T>()
+                    .AsNoTracking()
+                : _context.Set<T>();
 
 
-        public async Task<IQueryable<T>> FindByCondition(Expression<Func<T, bool>> expression,
+        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression,
             bool trackChanges) =>
             !trackChanges
-                ? ( await _context.Set<T>()
+                ? _context.Set<T>()
                     .Where(expression)
-                    .AsNoTracking().ToListAsync()).AsQueryable()
-                : (await _context.Set<T>()
-                    .Where(expression).ToListAsync()).AsQueryable();
+                    .AsNoTracking()
+                : _context.Set<T>()
+                    .Where(expression);
 
         public async Task Create(T entity) =>await _context.Set<T>().AddAsync(entity);
         public void Update(T entity) => _context.Set<T>().Update(entity);

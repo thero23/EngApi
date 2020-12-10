@@ -9,8 +9,8 @@ namespace English.Database.Data.Interfaces
     public interface IBaseRepository<T>
     {
 
-        Task<IQueryable<T>> FindAll(bool trackChanges);
-        Task<IQueryable<T>> FindByCondition(Expression<Func<T, bool>> expression,
+        IQueryable<T> FindAll(bool trackChanges);
+        IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression,
             bool trackChanges);
         Task Create(T entity);
         void Update(T entity);

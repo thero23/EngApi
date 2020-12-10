@@ -21,14 +21,14 @@ namespace English.Services
 
 
         //words
-        public async Task<IQueryable<Word>> FindAllWords(bool trackChanges)
+        public IQueryable<Word> FindAllWords(bool trackChanges)
         {
-            return await _repository.Word.FindAll(trackChanges);
+            return _repository.Word.FindAll(trackChanges);
         }
 
-        public async Task<IQueryable<Word>> FindWordByCondition(Expression<Func<Word, bool>> expression, bool trackChanges)
+        public IQueryable<Word> FindWordByCondition(Expression<Func<Word, bool>> expression, bool trackChanges)
         {
-            return await _repository.Word.FindByCondition(expression, trackChanges);
+            return _repository.Word.FindByCondition(expression, trackChanges);
         }
 
         public async Task CreateWord(Word entity)
@@ -49,14 +49,14 @@ namespace English.Services
         
         // dictionaries
 
-        public async Task<IQueryable<Dictionary>> FindAllDictionaries(bool trackChanges)
+        public IQueryable<Dictionary> FindAllDictionaries(bool trackChanges)
         {
-            return await _repository.Dictionary.FindAll(trackChanges);
+            return _repository.Dictionary.FindAll(trackChanges);
         }
 
-        public async Task<IQueryable<Dictionary>> FindDictionaryByCondition(Expression<Func<Dictionary, bool>> expression, bool trackChanges)
+        public IQueryable<Dictionary> FindDictionaryByCondition(Expression<Func<Dictionary, bool>> expression, bool trackChanges)
         {
-            return await _repository.Dictionary.FindByCondition(expression, trackChanges);
+            return _repository.Dictionary.FindByCondition(expression, trackChanges);
         }
 
         public async Task CreateDictionary(Dictionary entity)

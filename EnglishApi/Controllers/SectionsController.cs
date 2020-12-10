@@ -40,7 +40,7 @@ namespace EnglishApi.Controllers
         [Route("", Name = "GetAllSections")]
         public async Task<IActionResult> GetAllSections()
         {
-            var sections = (await _service.FindAllSections(false));
+            var sections =  _service.FindAllSections(false);
 
             return Ok(sections);
         }
@@ -51,7 +51,7 @@ namespace EnglishApi.Controllers
         public async Task<IActionResult> GetSectionById(Guid id)
         {
             
-            var section = (await _service.FindSectionByCondition(p=>p.Id == id,false));
+            var section = _service.FindSectionByCondition(p=>p.Id == id,false);
            
             return Ok(section);
         }
@@ -69,7 +69,7 @@ namespace EnglishApi.Controllers
         [Route("{id}", Name = "DeleteSection")]
         public async Task<IActionResult> DeleteSection(Guid id)
         {
-            var  section =(await _service.FindSectionByCondition(p=>p.Id==id,true)).FirstOrDefault();
+            var  section = _service.FindSectionByCondition(p=>p.Id==id,true).FirstOrDefault();
             if (section == null)
             {
                 return NotFound();
@@ -93,12 +93,12 @@ namespace EnglishApi.Controllers
         [Route("{sectionId}/subsections/{subsectionId}", Name = "AddSubsectionToSection")]
         public async Task<IActionResult> AddSubsectionToSection(Guid sectionId, Guid subsectionId)
         {
-            if (!_service.IsSectionExist(sectionId).Result)
+            if (!_service.IsSectionExist(sectionId))
             {
                 return NotFound();
             }
 
-            if (!_service.IsSubsectionExist(subsectionId).Result)
+            if (!_service.IsSubsectionExist(subsectionId))
             {
                 return NotFound();
             }

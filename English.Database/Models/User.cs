@@ -15,6 +15,14 @@ namespace English.Database.Models
         [Required]
         public string Password{ get; set; }
 
+        [EmailAddress]
+        public string Email { get; set; }
+
+        public string Name { get; set; }
+
+        public string Surname { get; set; }
+
+        public string Patronymic { get; set; }
         [Required]
         public Guid UserRoleId { get; set; }
 

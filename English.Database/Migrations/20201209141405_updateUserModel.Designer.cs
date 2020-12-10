@@ -4,14 +4,16 @@ using English.Database.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace English.Database.Migrations
 {
     [DbContext(typeof(EnglishContext))]
-    partial class EnglishContextModelSnapshot : ModelSnapshot
+    [Migration("20201209141405_updateUserModel")]
+    partial class updateUserModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,23 +158,20 @@ namespace English.Database.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FIO")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Patronymic")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Surname")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserRoleId")
@@ -198,18 +197,6 @@ namespace English.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b00285f0-e579-4e0b-a3f1-794e574f54e2"),
-                            Name = "admin"
-                        },
-                        new
-                        {
-                            Id = new Guid("c2396ad9-9504-40f4-8a39-bbcb2ec8da8b"),
-                            Name = "user"
-                        });
                 });
 
             modelBuilder.Entity("English.Database.Models.Word", b =>

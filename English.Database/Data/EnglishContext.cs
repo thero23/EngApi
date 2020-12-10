@@ -1,4 +1,6 @@
-﻿using English.Database.Models;
+﻿using System;
+using System.Linq;
+using English.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace English.Database.Data
@@ -20,6 +22,6 @@ namespace English.Database.Data
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<SectionUser> SectionUsers { get; set; }
 
-
+     
     }
 }

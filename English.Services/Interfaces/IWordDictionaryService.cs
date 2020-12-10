@@ -14,8 +14,8 @@ namespace English.Services.Interfaces
     {
 
         //words
-        Task<IQueryable<Word>> FindAllWords(bool trackChanges);
-        Task<IQueryable<Word>> FindWordByCondition(Expression<Func<Word, bool>> expression,
+        IQueryable<Word> FindAllWords(bool trackChanges);
+        IQueryable<Word> FindWordByCondition(Expression<Func<Word, bool>> expression,
             bool trackChanges);
         Task CreateWord(Word entity);
         void UpdateWord(Word entity);
@@ -26,8 +26,8 @@ namespace English.Services.Interfaces
 
 
         //dictionaries
-        Task<IQueryable<Dictionary>> FindAllDictionaries(bool trackChanges);
-        Task<IQueryable<Dictionary>> FindDictionaryByCondition(Expression<Func<Dictionary, bool>> expression,
+        IQueryable<Dictionary> FindAllDictionaries(bool trackChanges);
+        IQueryable<Dictionary> FindDictionaryByCondition(Expression<Func<Dictionary, bool>> expression,
             bool trackChanges);
         Task CreateDictionary(Dictionary entity);
         void UpdateDictionary(Dictionary entity);

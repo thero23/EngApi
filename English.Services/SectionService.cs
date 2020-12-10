@@ -18,14 +18,14 @@ namespace English.Services
         {
             _repository = repository;
         }
-        public async Task<IQueryable<Section>> FindAllSections(bool trackChanges)
+        public IQueryable<Section> FindAllSections(bool trackChanges)
         {
-            return await _repository.Section.FindAll(trackChanges);
+            return  _repository.Section.FindAll(trackChanges);
         }
 
-        public async Task<IQueryable<Section>> FindSectionByCondition(Expression<Func<Section, bool>> expression, bool trackChanges)
+        public IQueryable<Section> FindSectionByCondition(Expression<Func<Section, bool>> expression, bool trackChanges)
         {
-            return await _repository.Section.FindByCondition(expression, trackChanges);
+            return _repository.Section.FindByCondition(expression, trackChanges);
         }
 
         public async Task CreateSection(Section entity)
@@ -91,28 +91,28 @@ namespace English.Services
 
 
 
-        public async Task<bool> IsSectionExist(Guid sectionId)
+        public bool IsSectionExist(Guid sectionId)
         {
-            var section = (await _repository.Section.FindByCondition(p => p.Id == sectionId, false)).FirstOrDefault();
-            return section == null;
+            var section =  _repository.Section.FindByCondition(p => p.Id == sectionId, false).FirstOrDefault();
+            return section != null;
         }
 
-        public async Task<bool> IsDictionaryExist(Guid dictionaryId)
+        public  bool IsDictionaryExist(Guid dictionaryId)
         {
-            var dictionary = (await _repository.Dictionary.FindByCondition(p => p.Id == dictionaryId, false)).FirstOrDefault();
-            return dictionary == null;
+            var dictionary = _repository.Dictionary.FindByCondition(p => p.Id == dictionaryId, false).FirstOrDefault();
+            return dictionary != null;
         }
 
-        public async Task<bool> IsUserExist(Guid userId)
+        public bool IsUserExist(Guid userId)
         {
-            var user = (await _repository.User.FindByCondition(p => p.Id == userId, false)).FirstOrDefault();
-            return user == null;
+            var user = _repository.User.FindByCondition(p => p.Id == userId, false).FirstOrDefault();
+            return user != null;
         }
 
-        public async Task<bool> IsSubsectionExist(Guid subsectionId)
+        public bool IsSubsectionExist(Guid subsectionId)
         {
-            var subsection = (await _repository.Subsection.FindByCondition(p => p.Id == subsectionId, false)).FirstOrDefault();
-            return subsection == null;
+            var subsection = _repository.Subsection.FindByCondition(p => p.Id == subsectionId, false).FirstOrDefault();
+            return subsection != null;
         }
 
 

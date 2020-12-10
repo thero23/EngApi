@@ -19,14 +19,14 @@ namespace English.Services
             _repository = repository;
         }
 
-        public async Task<IQueryable<Subsection>> FindAllSubsections(bool trackChanges)
+        public IQueryable<Subsection> FindAllSubsections(bool trackChanges)
         {
-            return await _repository.Subsection.FindAll(trackChanges);
+            return _repository.Subsection.FindAll(trackChanges);
         }
 
-        public async Task<IQueryable<Subsection>> FindSubsectionByCondition(Expression<Func<Subsection, bool>> expression, bool trackChanges)
+        public IQueryable<Subsection> FindSubsectionByCondition(Expression<Func<Subsection, bool>> expression, bool trackChanges)
         {
-            return await _repository.Subsection.FindByCondition(expression, trackChanges);
+            return _repository.Subsection.FindByCondition(expression, trackChanges);
         }
 
         public async Task CreateSubsection(Subsection entity)

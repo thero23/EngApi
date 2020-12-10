@@ -12,6 +12,7 @@ namespace English.Database.Data.Repositories
         private ISectionRepository _sectionRepository;
         private ISubsectionRepository _subsectionRepository;
         private IUserRepository _userRepository;
+        private IUserRoleRepository _userRoleRepository;
 
         public RepositoryManager(EnglishContext context)
         {
@@ -67,6 +68,16 @@ namespace English.Database.Data.Repositories
                 if (_userRepository == null)
                     _userRepository = new UserRepository(_context);
                 return _userRepository;
+            }
+        }
+
+        public IUserRoleRepository UserRole
+        {
+            get
+            {
+                if (_userRoleRepository == null)
+                    _userRoleRepository = new UserRoleRepository(_context);
+                return _userRoleRepository;
             }
         }
 

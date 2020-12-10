@@ -4,14 +4,16 @@ using English.Database.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace English.Database.Migrations
 {
     [DbContext(typeof(EnglishContext))]
-    partial class EnglishContextModelSnapshot : ModelSnapshot
+    [Migration("20201210081224_TestSeedingRoleChangeModel")]
+    partial class TestSeedingRoleChangeModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,6 +197,9 @@ namespace English.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Testik")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("UserRoles");
@@ -202,12 +207,12 @@ namespace English.Database.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("b00285f0-e579-4e0b-a3f1-794e574f54e2"),
+                            Id = new Guid("b79eb9a4-f929-47b7-a849-30efe3c0a3a5"),
                             Name = "admin"
                         },
                         new
                         {
-                            Id = new Guid("c2396ad9-9504-40f4-8a39-bbcb2ec8da8b"),
+                            Id = new Guid("cea9ae1e-3406-4af1-9457-348ff5550f82"),
                             Name = "user"
                         });
                 });
