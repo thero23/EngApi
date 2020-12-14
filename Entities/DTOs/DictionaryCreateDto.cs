@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace English.Services.DTOs
+namespace Entities.DTOs
 {
     public class DictionaryCreateDto
     {

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Entities.Models;
-using English.Services.DTOs;
+using Entities.DTOs;
 
 namespace English.Services.Mappings
 {

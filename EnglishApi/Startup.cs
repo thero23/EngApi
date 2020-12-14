@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text;
 using AutoMapper;
+using Contracts;
 using Entities.Data;
 using Entities.Models;
 using English.Services.Interfaces;
@@ -24,7 +25,7 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NLog;
-using ValidationContext = AutoMapper.ValidationContext;
+
 
 namespace EnglishApi
 {
@@ -95,34 +96,27 @@ namespace EnglishApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,  ILoggerManager logger)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }else
+            }
+            else
             {
                 app.UseHsts();
             }
 
-           
+            app.ConfigureExceptionHandler(logger);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-           
-           
-
             app.UseCors("CorsPolicy");
-
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.All
             });
             app.UseRouting();
-
-            app.UseAuthentication();
             app.UseAuthorization();
-
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

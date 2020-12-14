@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Contracts;
 using Entities.Models;
-using English.Services.DTOs;
 using English.Services.Interfaces;
-
+using Entities.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +41,6 @@ namespace EnglishApi.Controllers
         [Route("words")]
         public  IActionResult GetAllWords()
         {
-
             var words =  _service.FindAllWords(false);
             var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
             return Ok(wordsDto);
@@ -81,6 +79,7 @@ namespace EnglishApi.Controllers
         [Route("words/{id}", Name = "DeleteWord")]
         public async Task<IActionResult> DeleteWord(Guid id)
         {
+
             var item = _service.FindWordByCondition(p=>p.Id == id,true).FirstOrDefault();
             if (item == null)
             {

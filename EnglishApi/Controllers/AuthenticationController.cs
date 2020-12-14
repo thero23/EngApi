@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Contracts;
 using Entities.Models;
-using English.Services.DTOs;
 using English.Services.Interfaces;
-
+using Entities.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

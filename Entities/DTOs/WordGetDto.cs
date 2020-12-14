@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace English.Services.DTOs
+namespace Entities.DTOs
 {
     public class WordGetDto
     {

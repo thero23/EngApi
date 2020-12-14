@@ -1,9 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace English.Services.DTOs
+namespace Entities.DTOs
 {
-    public class WordCreateDto
+    public class WordUpdateDto
     {
+        [Key]
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(250)]

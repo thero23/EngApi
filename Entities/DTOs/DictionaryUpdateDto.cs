@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace English.Services.DTOs
+namespace Entities.DTOs
 {
-    public class WordUpdateDto
+    public class DictionaryUpdateDto
     {
-        [Key]
+        [Required]
         public Guid Id { get; set; }
 
         [Required]

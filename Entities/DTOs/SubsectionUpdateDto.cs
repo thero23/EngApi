@@ -1,6 +1,6 @@
 ﻿using Entities.Models;
 
-namespace English.Services.DTOs
+namespace Entities.DTOs
 {
     public class SubsectionUpdateDto:BaseEntity
     {
