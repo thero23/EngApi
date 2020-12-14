@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using English.Database.Models;
+using Entities.Models;
 
 namespace English.Services.Interfaces
 {
@@ -18,12 +18,7 @@ namespace English.Services.Interfaces
         void UpdateUser(User entity);
         void DeleteUser(User entity);
 
-        IQueryable<UserRole> FindAllUserRoles(bool trackChanges);
-        IQueryable<UserRole> FindUserRoleByCondition(Expression<Func<UserRole, bool>> expression,
-            bool trackChanges);
-        Task CreateUserRole(UserRole entity);
-        void UpdateUserRole(UserRole entity);
-        void DeleteUserRole(UserRole entity);
+
         public Task Save();
 
     }

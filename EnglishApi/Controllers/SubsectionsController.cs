@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using English.Database.Data.Interfaces;
-using English.Database.Models;
+using Contracts;
+using Entities.Data.Interfaces;
+using Entities.Models;
 using English.Services.Interfaces;
-using EnglishApi.Logger;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

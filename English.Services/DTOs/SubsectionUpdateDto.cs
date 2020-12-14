@@ -1,4 +1,4 @@
-﻿using English.Database.Models;
+﻿using Entities.Models;
 
 namespace English.Services.DTOs
 {

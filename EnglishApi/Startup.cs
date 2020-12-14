@@ -4,18 +4,19 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text;
 using AutoMapper;
-using English.Database.Data;
-using English.Database.Data.Interfaces;
-using English.Database.Data.Repositories;
+using Entities.Data;
+using Entities.Data.Interfaces;
+using Entities.Data.Repositories;
+using Entities.Models;
 using English.Services.Interfaces;
 using English.Services;
 using English.Services.Mappings;
-using EnglishApi.Logger;
-using EnglishApi.Options;
+using EnglishApi.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,70 +42,31 @@ namespace EnglishApi
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           
+            services.ConfigureCors();
+            services.ConfigureIISIntegration();
+            services.ConfigureLoggerService();
+            
+
             services.AddDbContext<EnglishContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("EnglishConnection")));
 
-            var passwordHashSettings = Configuration.GetSection("AppSettings:PasswordHashSettings").Get<PasswordHashSettings>() ?? new PasswordHashSettings();
-            services.AddTransient(t => new PasswordHashSettings());
-            services.AddScoped(s => new PasswordHashSettings(passwordHashSettings));
-
-
-      
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //        .AddJwtBearer(options =>
-            //        {
-            //            options.RequireHttpsMetadata = false;
-            //            options.TokenValidationParameters = new TokenValidationParameters
-            //            {
-            //                // укзывает, будет ли валидироваться издатель при валидации токена
-            //                ValidateIssuer = true,
-            //                // строка, представляющая издателя
-            //                ValidIssuer = AuthOptions.ISSUER,
-
-            //                // будет ли валидироваться потребитель токена
-            //                ValidateAudience = true,
-            //                // установка потребителя токена
-            //                ValidAudience = AuthOptions.AUDIENCE,
-            //                // будет ли валидироваться время существования
-            //                ValidateLifetime = true,
-
-            //                // установка ключа безопасности
-            //                IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-            //                // валидация ключа безопасности
-            //                ValidateIssuerSigningKey = true,
-            //            };
-            //        });
-
-
-
-            var jwtSettings = new JwtSettings();
-            Configuration.Bind(nameof(jwtSettings),jwtSettings);
-            services.AddSingleton(jwtSettings);
-
-            services.AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(x =>
-                {
-                    x.SaveToken = true;
-                    x.TokenValidationParameters= new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey =  new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true
-                    };
-                });
-                    
+            services.AddAuthentication();
+            var builder = services.AddIdentityCore<User>(o =>
+            {
+                o.Password.RequireDigit = true;
+                o.Password.RequireLowercase = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequiredLength = 10;
+                o.User.RequireUniqueEmail = true;
+            });
+            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole),
+                builder.Services);
+            builder.AddEntityFrameworkStores<EnglishContext>()
+                .AddDefaultTokenProviders();
 
 
             services.AddScoped<IRepositoryManager, RepositoryManager>();
@@ -114,7 +76,6 @@ namespace EnglishApi
             services.AddScoped<IUserService,UserService>();
 
 
-            services.AddScoped<ILoggerManager, LoggerManager>();
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new MappingProfile());
@@ -148,17 +109,18 @@ namespace EnglishApi
             app.UseHttpsRedirection();
             app.UseStaticFiles();
            
-            app.UseRouting();
+           
 
-            app.UseAuthorization();
-            app.UseAuthentication();
-
-            app.UseCors("AllowAll");
+            app.UseCors("CorsPolicy");
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.All
             });
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
 
             app.UseEndpoints(endpoints =>
@@ -173,13 +135,6 @@ namespace EnglishApi
             });
             
         }
-        private static void ValidateAppSettings(PasswordHashSettings passwordHashSettings)
-        {
-            var resultsValidation = new List<ValidationResult>();
-
-            Validator.TryValidateObject(passwordHashSettings, new System.ComponentModel.DataAnnotations.ValidationContext(passwordHashSettings), resultsValidation, true);
-            resultsValidation.ForEach(error => Console.WriteLine(error.ErrorMessage));
-
-        }
+       
     }
 }

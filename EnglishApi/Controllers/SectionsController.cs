@@ -4,10 +4,11 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using AutoMapper;
-using English.Database.Data.Interfaces;
-using English.Database.Models;
+using Contracts;
+using Entities.Data.Interfaces;
+using Entities.Models;
 using English.Services.Interfaces;
-using EnglishApi.Logger;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -117,7 +118,7 @@ namespace EnglishApi.Controllers
 
         [HttpPost]
         [Route("{sectionId}/users/{userId}", Name = "AddUserToSection")]
-        public async Task<IActionResult> AddUserToSection(Guid sectionId, Guid userId)
+        public async Task<IActionResult> AddUserToSection(Guid sectionId, string userId)
         {
             if (!_service.IsSectionExist(sectionId))
             {
@@ -142,7 +143,7 @@ namespace EnglishApi.Controllers
 
         [HttpDelete]
         [Route("{sectionId}/users/{userId}", Name = "DeleteUserFromSection")]
-        public async Task<IActionResult> DeleteUserFromSection(Guid sectionId, Guid userId)
+        public async Task<IActionResult> DeleteUserFromSection(Guid sectionId, string userId)
         {
             if (!_service.IsSectionExist(sectionId))
             {

@@ -41,7 +41,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Options\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\English.Services\English.Services.csproj" />
+    <ProjectReference Include="..\LoggerService\LoggerService.csproj" />
   </ItemGroup>
 
 

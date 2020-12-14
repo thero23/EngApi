@@ -4,11 +4,12 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using AutoMapper;
-using English.Database.Data.Interfaces;
-using English.Database.Models;
+using Contracts;
+using Entities.Data.Interfaces;
+using Entities.Models;
 using English.Services.DTOs;
 using English.Services.Interfaces;
-using EnglishApi.Logger;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +43,7 @@ namespace EnglishApi.Controllers
         [Route("words")]
         public  IActionResult GetAllWords()
         {
-           
+
             var words =  _service.FindAllWords(false);
             var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
             return Ok(wordsDto);

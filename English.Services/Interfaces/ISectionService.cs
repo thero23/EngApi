@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using English.Database.Models;
+using Entities.Models;
 
 namespace English.Services.Interfaces
 {
@@ -17,9 +17,9 @@ namespace English.Services.Interfaces
         void UpdateSection(Section entity);
         void DeleteSection(Section entity);
 
-        Task AddUserToSection(Guid userId, Guid sectionId);
-        Task<bool> IsHasAccess(Guid userId, Guid sectionId);
-        Task DeleteUserFromSection(Guid userId, Guid sectionId);
+        Task AddUserToSection(string userId, Guid sectionId);
+        Task<bool> IsHasAccess(string userId, Guid sectionId);
+        Task DeleteUserFromSection(string userId, Guid sectionId);
 
 
         void AddSubsectionToSection(Guid subsectionId, Guid sectionId);
@@ -33,7 +33,7 @@ namespace English.Services.Interfaces
 
         bool IsSectionExist( Guid id);
         bool IsSubsectionExist(Guid id);
-        bool IsUserExist(Guid id);
+        bool IsUserExist(string id);
         bool IsDictionaryExist(Guid id);
        
 

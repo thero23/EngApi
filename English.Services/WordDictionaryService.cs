@@ -5,8 +5,8 @@ using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using English.Database.Data.Interfaces;
-using English.Database.Models;
+using Entities.Data.Interfaces;
+using Entities.Models;
 using English.Services.Interfaces;
 
 namespace English.Services

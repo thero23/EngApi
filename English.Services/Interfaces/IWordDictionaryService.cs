@@ -4,9 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using English.Database.Data.Interfaces;
-using English.Database.Data.Repositories;
-using English.Database.Models;
+using Entities.Data.Interfaces;
+using Entities.Data.Repositories;
+using Entities.Models;
 
 namespace English.Services.Interfaces
 {

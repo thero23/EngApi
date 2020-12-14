@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using English.Database.Models;
+using Entities.Models;
 using English.Services.DTOs;
 
 namespace English.Services.Mappings
@@ -18,7 +18,8 @@ namespace English.Services.Mappings
             CreateMap<WordCreateDto,Word >();
             CreateMap<WordUpdateDto,Word >();
 
-            CreateMap<User, UserWithRoleDto>().ForMember(x=>x.UserRoleName,opt=>opt.MapFrom(c=>c.UserRole.Name));
+            CreateMap<UserForRegistrationDto, User>();
+
 
 
         }

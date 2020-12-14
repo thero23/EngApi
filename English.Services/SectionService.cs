@@ -4,8 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using English.Database.Data.Interfaces;
-using English.Database.Models;
+using Entities.Data.Interfaces;
+using Entities.Models;
 using English.Services.Interfaces;
 
 namespace English.Services
@@ -43,17 +43,17 @@ namespace English.Services
             _repository.Section.Delete(entity);
         }
 
-        public async Task AddUserToSection(Guid userId, Guid sectionId)
+        public async Task AddUserToSection(string userId, Guid sectionId)
         {
            await _repository.Section.AddUserToSection(userId, sectionId);
         }
 
-        public async Task<bool> IsHasAccess(Guid userId, Guid sectionId)
+        public async Task<bool> IsHasAccess(string userId, Guid sectionId)
         {
             return await _repository.Section.IsHasAccess(userId, sectionId);
         }
 
-        public async Task DeleteUserFromSection(Guid userId, Guid sectionId)
+        public async Task DeleteUserFromSection(string userId, Guid sectionId)
         {
             await _repository.Section.DeleteUserFromSection(userId, sectionId);
         }
@@ -103,9 +103,9 @@ namespace English.Services
             return dictionary != null;
         }
 
-        public bool IsUserExist(Guid userId)
+        public bool IsUserExist(string userId)
         {
-            var user = _repository.User.FindByCondition(p => p.Id == userId, false).FirstOrDefault();
+            var user = _repository.User.FindByCondition(p => Equals(p.Id, userId), false).FirstOrDefault();
             return user != null;
         }
 
