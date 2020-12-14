@@ -4,8 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using Entities.Data.Interfaces;
-using Entities.Data.Repositories;
 using Entities.Models;
 
 namespace English.Services.Interfaces

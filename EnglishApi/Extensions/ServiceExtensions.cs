@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Contracts;
+﻿using Contracts;
+using Entities.Data;
 using LoggerService;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Repository;
 
 namespace EnglishApi.Extensions
 {
@@ -28,7 +28,13 @@ namespace EnglishApi.Extensions
         public static void ConfigureLoggerService(this IServiceCollection services) =>
             services.AddScoped<ILoggerManager, LoggerManager>();
 
+        public static void ConfigureSqlContext(this IServiceCollection services,
+            IConfiguration configuration) =>
+            services.AddDbContext<EnglishContext>(opts =>
+                opts.UseSqlServer(configuration.GetConnectionString("EnglishConnection")));
 
+        public static void ConfigureRepositoryManager(this IServiceCollection services) =>
+            services.AddScoped<IRepositoryManager, RepositoryManager>();
     }
 
 

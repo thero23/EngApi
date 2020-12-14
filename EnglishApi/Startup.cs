@@ -5,8 +5,6 @@ using System.IO;
 using System.Text;
 using AutoMapper;
 using Entities.Data;
-using Entities.Data.Interfaces;
-using Entities.Data.Repositories;
 using Entities.Models;
 using English.Services.Interfaces;
 using English.Services;
@@ -47,7 +45,9 @@ namespace EnglishApi
             services.ConfigureCors();
             services.ConfigureIISIntegration();
             services.ConfigureLoggerService();
-            
+            services.ConfigureSqlContext(Configuration);
+            services.ConfigureRepositoryManager();
+
 
             services.AddDbContext<EnglishContext>(options =>
                 options.UseSqlServer(
@@ -69,7 +69,7 @@ namespace EnglishApi
                 .AddDefaultTokenProviders();
 
 
-            services.AddScoped<IRepositoryManager, RepositoryManager>();
+            
             services.AddScoped<IWordDictionaryService, WordDictionaryService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISubsectionService, SubsectionService>();

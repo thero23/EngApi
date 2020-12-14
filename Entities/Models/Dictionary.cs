@@ -8,12 +8,12 @@ namespace Entities.Models
         [Key]
         public Guid Id { get; set; }
 
-        [Required]
-        [MaxLength(250)]
+        [Required(ErrorMessage = "Secret name is a required field.")]
+        [MaxLength(250, ErrorMessage = "Maximum length for secret name is 250 characters.")]
         public string SecretName { get; set; }
 
-        [Required]
-        [MaxLength(250)]
+        [Required(ErrorMessage = "Name is a required field.")]
+        [MaxLength(250, ErrorMessage = "Maximum length for name is 250 characters.")]
         public string Name { get; set; }
     }
 }

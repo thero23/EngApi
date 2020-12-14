@@ -5,6 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Interfaces\**" />
+    <Compile Remove="Data\Repositories\**" />
+    <EmbeddedResource Remove="Data\Interfaces\**" />
+    <EmbeddedResource Remove="Data\Repositories\**" />
+    <None Remove="Data\Interfaces\**" />
+    <None Remove="Data\Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Migrations\20201210092727_TestSeedUser1st.cs" />
     <Compile Remove="Migrations\20201210092727_TestSeedUser1st.Designer.cs" />
     <Compile Remove="Migrations\20201214104412_TestWhenEntityRenamed.cs" />

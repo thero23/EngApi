@@ -47,6 +47,7 @@
   <ItemGroup>
     <ProjectReference Include="..\English.Services\English.Services.csproj" />
     <ProjectReference Include="..\LoggerService\LoggerService.csproj" />
+    <ProjectReference Include="..\Repository\Repository.csproj" />
   </ItemGroup>
 
 
