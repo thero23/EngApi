@@ -76,6 +76,7 @@ namespace English.Database.Data.Repositories
 
         public Task DeleteDictionaryFromSection(Guid dictionaryId, Guid sectionId)
         {
+            
             throw new NotImplementedException();
         }
 

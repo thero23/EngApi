@@ -33,19 +33,19 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("", Name = "GetAllSubsections")]
-        public async Task<IActionResult> GetAllSubsections()
+        public  IActionResult GetAllSubsections()
         {
 
-            var sections = (await _service.FindAllSubsections(false));
+            var sections = _service.FindAllSubsections(false);
 
             return Ok(sections);
         }
 
         [HttpGet]
         [Route("{id}", Name = "GetSubsectionById")]
-        public async Task<IActionResult> GetSubsectionById(Guid id)
+        public IActionResult GetSubsectionById(Guid id)
         {
-            var subsection = (await _service.FindSubsectionByCondition(p => p.Id == id, false));
+            var subsection = _service.FindSubsectionByCondition(p => p.Id == id, false);
 
 
             return Ok(subsection);
@@ -64,7 +64,7 @@ namespace EnglishApi.Controllers
         [Route("{id}", Name = "DeleteSubsection")]
         public async Task<IActionResult> DeleteSubsection(Guid id)
         {
-            var subsection = (await _service.FindSubsectionByCondition(p => p.Id == id, true)).FirstOrDefault();
+            var subsection =  _service.FindSubsectionByCondition(p => p.Id == id, true).FirstOrDefault();
             if (subsection == null)
             {
                 return NotFound();

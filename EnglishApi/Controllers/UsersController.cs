@@ -1,18 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using English.Database.Data;
 using English.Database.Models;
+using English.Services.DTOs;
 using English.Services.Interfaces;
 using EnglishApi.Logger;
 using EnglishApi.Options;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -33,33 +32,36 @@ namespace EnglishApi.Controllers
             _mapper = mapper;
         }
 
-
         [HttpGet]
         [Route("", Name = "GetAllUsers")]
-        public async Task<IActionResult> GetAllUsers()
+        public  IActionResult GetAllUsers()
         {
-            var users = await _service.FindAllUsers(false);
-            return Ok(users);
+            var users =_service.FindAllUsers(false).Include(x=>x.UserRole);
+            var usersDto = _mapper.Map<IEnumerable<UserWithRoleDto>>(users);
+
+            return Ok(usersDto);
         }
 
+        [Authorize]
         [HttpGet]
         [Route("{id}", Name = "GetUserById")]
-        public async Task<IActionResult> GetUserById(Guid id)
+        public  IActionResult GetUserById(Guid id)
         {
-            var user = (await _service.FindUserByCondition(x => x.Id == id, false)).FirstOrDefault();
-            if (user == null)
+            var user =  _service.FindUserByCondition(x => x.Id == id, false).Include(c=>c.UserRole).FirstOrDefault();
+            var userWithRole =_mapper.Map<UserWithRoleDto>(user);
+            if (userWithRole == null)
             {
                 return NotFound();
             }
 
-            return Ok(user);
+            return Ok(userWithRole);
         }
 
         
 
-        //POST: api/users/auth/signin
+        
         [HttpPost]
-        [Route("signIn")]
+        [Route("auth/signIn")]
         public async Task<IActionResult> Signin([FromForm] string login, [FromForm] string password)
         {
             var identity = await GetIdentity(login, password);
@@ -70,6 +72,7 @@ namespace EnglishApi.Controllers
 
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
+
                 issuer: AuthOptions.ISSUER,
                 audience: AuthOptions.AUDIENCE,
                 notBefore: now,
@@ -93,14 +96,16 @@ namespace EnglishApi.Controllers
      
         private async Task<ClaimsIdentity> GetIdentity(string login, string password)
         {
-            var task = await Task.Run(async () =>
+            var task = await Task.Run( () =>
             {
-                var user = (await _service.FindUserByCondition(x => x.Login == login && x.Password == password, false)).Include(x => x.UserRole).FirstOrDefault();
-                if (user == null) return null;
+                var user = _service.FindUserByCondition(x => x.Login == login && x.Password == password, false).Include(x => x.UserRole).FirstOrDefault();
+                var userWithRole = _mapper.Map<UserWithRoleDto>(user);
+
+                if (userWithRole == null) return null;
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, user.UserRole.Name)
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, userWithRole.Login),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, userWithRole.UserRoleName)
                 };
                 ClaimsIdentity claimsIdentity =
                     new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
@@ -114,9 +119,9 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("test/{id}", Name = "test")]
-        public async Task<IActionResult> GetUserOnTest(Guid id)
+        public  IActionResult GetUserOnTest(Guid id)
         {
-            var user = (await _service.FindUserByCondition(x => x.Id == id, true)).Include(x => x.UserRole).FirstOrDefault();
+            var user = _service.FindUserByCondition(x => x.Id == id, true).FirstOrDefault();
 
             
             
@@ -129,7 +134,7 @@ namespace EnglishApi.Controllers
         public async Task<IActionResult> UpdateUserTest([FromBody]User user)
         {
 
-            var role = (await _service.FindUserRoleByCondition(x => x.Name == "admin", true)).FirstOrDefault();
+            var role = _service.FindUserRoleByCondition(x => x.Name == "admin", true).FirstOrDefault();
             
             user.UserRoleId = role.Id;
             user.UserRole = role;

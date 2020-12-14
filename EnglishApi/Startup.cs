@@ -16,11 +16,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using NLog;
 using ValidationContext = AutoMapper.ValidationContext;
 
@@ -50,30 +53,58 @@ namespace EnglishApi
             services.AddTransient(t => new PasswordHashSettings());
             services.AddScoped(s => new PasswordHashSettings(passwordHashSettings));
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
+
+      
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //        .AddJwtBearer(options =>
+            //        {
+            //            options.RequireHttpsMetadata = false;
+            //            options.TokenValidationParameters = new TokenValidationParameters
+            //            {
+            //                // укзывает, будет ли валидироваться издатель при валидации токена
+            //                ValidateIssuer = true,
+            //                // строка, представляющая издателя
+            //                ValidIssuer = AuthOptions.ISSUER,
+
+            //                // будет ли валидироваться потребитель токена
+            //                ValidateAudience = true,
+            //                // установка потребителя токена
+            //                ValidAudience = AuthOptions.AUDIENCE,
+            //                // будет ли валидироваться время существования
+            //                ValidateLifetime = true,
+
+            //                // установка ключа безопасности
+            //                IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+            //                // валидация ключа безопасности
+            //                ValidateIssuerSigningKey = true,
+            //            };
+            //        });
+
+
+
+            var jwtSettings = new JwtSettings();
+            Configuration.Bind(nameof(jwtSettings),jwtSettings);
+            services.AddSingleton(jwtSettings);
+
+            services.AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(x =>
+                {
+                    x.SaveToken = true;
+                    x.TokenValidationParameters= new TokenValidationParameters
                     {
-                        options.RequireHttpsMetadata = false;
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            // укзывает, будет ли валидироваться издатель при валидации токена
-                            ValidateIssuer = true,
-                            // строка, представляющая издателя
-                            ValidIssuer = AuthOptions.ISSUER,
-
-                            // будет ли валидироваться потребитель токена
-                            ValidateAudience = true,
-                            // установка потребителя токена
-                            ValidAudience = AuthOptions.AUDIENCE,
-                            // будет ли валидироваться время существования
-                            ValidateLifetime = true,
-
-                            // установка ключа безопасности
-                            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                            // валидация ключа безопасности
-                            ValidateIssuerSigningKey = true,
-                        };
-                    });
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey =  new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true
+                    };
+                });
+                    
 
 
             services.AddScoped<IRepositoryManager, RepositoryManager>();
@@ -98,7 +129,7 @@ namespace EnglishApi
 
 
 
-            services.AddControllersWithViews();
+            services.AddControllers();
             services.AddSwaggerGen();
         }
 

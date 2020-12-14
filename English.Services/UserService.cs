@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using English.Database.Data.Interfaces;
 using English.Database.Models;
 using English.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace English.Services
 {

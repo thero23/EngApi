@@ -4,7 +4,7 @@ using System.Text;
 
 namespace English.Services.DTOs
 {
-    public class UserWithRoleDTO
+    public class UserWithRoleDto
     {
         public Guid Id { get; set; }
 
@@ -22,6 +22,8 @@ namespace English.Services.DTOs
         public string Surname { get; set; }
 
         public string Patronymic { get; set; }
+
+        public Guid UserRoleId { get; set; }
 
         public string UserRoleName { get; set; }
     }

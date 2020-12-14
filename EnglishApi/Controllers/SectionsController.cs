@@ -38,7 +38,7 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("", Name = "GetAllSections")]
-        public async Task<IActionResult> GetAllSections()
+        public IActionResult GetAllSections()
         {
             var sections =  _service.FindAllSections(false);
 
@@ -48,7 +48,7 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("{id}", Name = "GetSectionById")]
-        public async Task<IActionResult> GetSectionById(Guid id)
+        public IActionResult GetSectionById(Guid id)
         {
             
             var section = _service.FindSectionByCondition(p=>p.Id == id,false);
@@ -119,13 +119,13 @@ namespace EnglishApi.Controllers
         [Route("{sectionId}/users/{userId}", Name = "AddUserToSection")]
         public async Task<IActionResult> AddUserToSection(Guid sectionId, Guid userId)
         {
-            if (!_service.IsSectionExist(sectionId).Result)
+            if (!_service.IsSectionExist(sectionId))
             {
                 return NotFound();
 
             }
 
-            if (!_service.IsUserExist(userId).Result)
+            if (!_service.IsUserExist(userId))
             {
                 return NotFound();
             }
@@ -144,13 +144,13 @@ namespace EnglishApi.Controllers
         [Route("{sectionId}/users/{userId}", Name = "DeleteUserFromSection")]
         public async Task<IActionResult> DeleteUserFromSection(Guid sectionId, Guid userId)
         {
-            if (!_service.IsSectionExist(sectionId).Result)
+            if (!_service.IsSectionExist(sectionId))
             {
                 return NotFound();
 
             }
 
-            if (!_service.IsUserExist(userId).Result)
+            if (!_service.IsUserExist(userId))
             {
                 return NotFound();
             }
@@ -170,13 +170,13 @@ namespace EnglishApi.Controllers
         {
 
             
-            if (!_service.IsSectionExist(sectionId).Result)
+            if (!_service.IsSectionExist(sectionId))
             {
                 return NotFound();
 
             }
 
-            if (!_service.IsDictionaryExist(dictionaryId).Result)
+            if (!_service.IsDictionaryExist(dictionaryId))
             {
                 return NotFound();
             }

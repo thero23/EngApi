@@ -40,7 +40,7 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("words")]
-        public async Task<IActionResult> GetAllWords()
+        public  IActionResult GetAllWords()
         {
            
             var words =  _service.FindAllWords(false);
@@ -113,7 +113,7 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("", Name = "GetAllDictionaries")]
-        public async Task<IActionResult> GetAllDictionaries()
+        public  IActionResult GetAllDictionaries()
         {
             var dictionaries =_service.FindAllDictionaries(false);
             var dictionariesDto = _mapper.Map<IEnumerable<DictionaryGetDto>>(dictionaries);
@@ -122,7 +122,7 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("{id}", Name = "GetDictionaryById")]
-        public async Task<IActionResult> GetDictionaryById(Guid id)
+        public  IActionResult GetDictionaryById(Guid id)
         {
             var item = _service.FindDictionaryByCondition(p => p.Id == id, false);
             if (item == null)
