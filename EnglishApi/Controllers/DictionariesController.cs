@@ -102,8 +102,7 @@ namespace EnglishApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                _logger.LogError("Invalid model state for the EmployeeForCreationDto object");
-                ModelState.AddModelError("original","govno");
+                _logger.LogError("Invalid model state for the WordCreateDto object");
                 return UnprocessableEntity(ModelState);
             }
 
@@ -183,7 +182,8 @@ namespace EnglishApi.Controllers
             }
 
             var wordToPatch = _mapper.Map<WordUpdateDto>(word);
-            patchDoc.ApplyTo(wordToPatch);
+            patchDoc.ApplyTo(wordToPatch, ModelState);
+            TryValidateModel(wordToPatch);
             if (!ModelState.IsValid)
             {
                 _logger.LogError("Invalid model state for the patch document");
@@ -230,6 +230,11 @@ namespace EnglishApi.Controllers
             {
                 return NotFound();
             }
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the WordCreateDto object");
+                return UnprocessableEntity(ModelState);
+            }
             var dictionary = _mapper.Map<Dictionary>(dictionaryDto);
             await _service.CreateDictionary(dictionary);
             await _service.Save();
@@ -267,13 +272,15 @@ namespace EnglishApi.Controllers
             }
 
             var dictionaryToPatch = _mapper.Map<DictionaryUpdateDto>(dictionary);
-            patchDoc.ApplyTo(dictionaryToPatch);
-
+          
+            patchDoc.ApplyTo(dictionaryToPatch, ModelState);
+            TryValidateModel(dictionaryToPatch);
             if (!ModelState.IsValid)
             {
                 _logger.LogError("Invalid model state for the patch document");
                 return UnprocessableEntity(ModelState);
             }
+
 
             _mapper.Map(dictionaryToPatch, dictionary);
 
