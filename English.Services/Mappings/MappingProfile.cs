@@ -12,11 +12,13 @@ namespace English.Services.Mappings
             
             CreateMap<Dictionary, DictionaryGetDto>();
             CreateMap<DictionaryCreateDto,Dictionary>();
-            CreateMap<DictionaryUpdateDto, Dictionary>();
+            CreateMap<DictionaryUpdateDto, Dictionary>().ReverseMap();
 
-            CreateMap<Word, WordGetDto>().ReverseMap();
+            CreateMap<Word, WordGetDto>();
             CreateMap<WordCreateDto,Word >();
-            CreateMap<WordUpdateDto,Word >();
+            CreateMap<WordUpdateDto,Word>().ReverseMap();
+           
+
 
             CreateMap<UserForRegistrationDto, User>();
 

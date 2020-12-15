@@ -15,6 +15,8 @@ namespace English.Services.Interfaces
         IQueryable<Word> FindAllWords(bool trackChanges);
         IQueryable<Word> FindWordByCondition(Expression<Func<Word, bool>> expression,
             bool trackChanges);
+
+        Task<IEnumerable<Word>> FindWordsByIds(IEnumerable<Guid> ids, bool trackChanges);
         Task CreateWord(Word entity);
         void UpdateWord(Word entity);
         void DeleteWord(Word entity);

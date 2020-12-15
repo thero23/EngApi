@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts;
@@ -12,6 +13,11 @@ namespace Repository
     {
         public WordRepository(EnglishContext context) : base(context)
         {
+        }
+
+        public async Task<IEnumerable<Word>> FindByIds(IEnumerable<Guid> ids, bool trackChanges)
+        {
+            return await FindByCondition(x => ids.Contains(x.Id), trackChanges).ToListAsync();
         }
 
         public async Task<IEnumerable<Word>> GetWordsFromDictionary(Dictionary dictionary)

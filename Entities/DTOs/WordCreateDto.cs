@@ -2,15 +2,9 @@
 
 namespace Entities.DTOs
 {
-    public class WordCreateDto
+    public class WordCreateDto:WordForManipulationDto
     {
 
-        [Required]
-        [MaxLength(250)]
-        public string Original { get; set; }
-
-        [Required]
-        [MaxLength(250)]
-        public string Translate { get; set; }
+        
     }
 }

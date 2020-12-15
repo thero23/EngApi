@@ -10,10 +10,10 @@ namespace Entities.DTOs
 
         [Required]
         [MaxLength(250)]
-        public string Original { get; set; }
+        public string Name { get; set; }
 
         [Required]
         [MaxLength(250)]
-        public string Translate { get; set; }
+        public string SecretName { get; set; }
     }
 }

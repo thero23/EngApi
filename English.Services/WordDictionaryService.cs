@@ -26,9 +26,15 @@ namespace English.Services
             return _repository.Word.FindAll(trackChanges);
         }
 
+        
         public IQueryable<Word> FindWordByCondition(Expression<Func<Word, bool>> expression, bool trackChanges)
         {
             return _repository.Word.FindByCondition(expression, trackChanges);
+        }
+
+        public async Task<IEnumerable<Word>> FindWordsByIds(IEnumerable<Guid> ids, bool trackChanges)
+        {
+            return await _repository.Word.FindByIds(ids, trackChanges);
         }
 
         public async Task CreateWord(Word entity)

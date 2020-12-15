@@ -29,7 +29,7 @@ namespace EnglishApi.Controllers
         public IActionResult GetAllDictionaries()
         {
            
-                throw new Exception("Exeption");
+              
             
             
             var sections = _service.FindAllDictionaries(false);

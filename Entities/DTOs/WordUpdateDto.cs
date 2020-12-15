@@ -3,17 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Entities.DTOs
 {
-    public class WordUpdateDto
+    public class WordUpdateDto:WordForManipulationDto
     {
-        [Key]
+        [Required(ErrorMessage = "Id is required for update")]
         public Guid Id { get; set; }
 
-        [Required]
-        [MaxLength(250)]
-        public string Original { get; set; }
-
-        [Required]
-        [MaxLength(250)]
-        public string Translate { get; set; }
     }
 }
