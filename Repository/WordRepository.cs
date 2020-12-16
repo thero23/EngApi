@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Contracts;
 using Entities.Data;
@@ -15,10 +16,42 @@ namespace Repository
         {
         }
 
-        public async Task<IEnumerable<Word>> FindByIds(IEnumerable<Guid> ids, bool trackChanges)
+
+
+        public async Task<IEnumerable<Word>> GetAllWordsAsync(bool trackChanges) =>
+            await FindAll(trackChanges)
+                .OrderBy(c => c.Original)
+                .ToListAsync();
+
+        public async Task<IEnumerable<Word>> GetWordsByConditionAsync(Expression<Func<Word, bool>> expression, bool trackChanges)
+        {
+            return await FindByCondition(expression, trackChanges).ToListAsync();
+
+        }
+
+      
+
+        public async Task CreateWordAsync(Word company)
+        {
+            await Create(company);
+        }
+
+        public async Task<IEnumerable<Word>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)
         {
             return await FindByCondition(x => ids.Contains(x.Id), trackChanges).ToListAsync();
         }
+
+        public void DeleteWord(Word word)
+        {
+            Delete(word);
+        }
+
+        public void UpdateWord(Word word)
+        {
+            Update(word);
+        }
+        
+        // word with dictionary operations
 
         public async Task<IEnumerable<Word>> GetWordsFromDictionary(Dictionary dictionary)
         {
@@ -51,11 +84,9 @@ namespace Repository
 
         }
 
-        public bool IsWordInDictionary(Word word, Dictionary dictionary)
+        public async Task<bool> IsWordInDictionary(Word word, Dictionary dictionary)
         {
-            return _context.DictionaryWords.Any(p => p.DictionaryId == dictionary.Id && p.WordId == word.Id);
-
-
+            return await _context.DictionaryWords.AnyAsync(p => p.DictionaryId == dictionary.Id && p.WordId == word.Id);
 
         }
 

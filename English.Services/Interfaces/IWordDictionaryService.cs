@@ -12,8 +12,8 @@ namespace English.Services.Interfaces
     {
 
         //words
-        IQueryable<Word> FindAllWords(bool trackChanges);
-        IQueryable<Word> FindWordByCondition(Expression<Func<Word, bool>> expression,
+        Task<IEnumerable<Word>> FindAllWords(bool trackChanges);
+        Task<IEnumerable<Word>> FindWordByCondition(Expression<Func<Word, bool>> expression,
             bool trackChanges);
 
         Task<IEnumerable<Word>> FindWordsByIds(IEnumerable<Guid> ids, bool trackChanges);
@@ -26,9 +26,11 @@ namespace English.Services.Interfaces
 
 
         //dictionaries
-        IQueryable<Dictionary> FindAllDictionaries(bool trackChanges);
-        IQueryable<Dictionary> FindDictionaryByCondition(Expression<Func<Dictionary, bool>> expression,
+        Task<IEnumerable<Dictionary>> FindAllDictionaries(bool trackChanges);
+        Task<IEnumerable<Dictionary>> FindDictionariesByCondition(Expression<Func<Dictionary, bool>> expression,
             bool trackChanges);
+
+        Task<IEnumerable<Dictionary>> FindDictionariesByIds(IEnumerable<Guid> ids, bool trackChanges);
         Task CreateDictionary(Dictionary entity);
         void UpdateDictionary(Dictionary entity);
         void DeleteDictionary(Dictionary entity);
@@ -38,7 +40,7 @@ namespace English.Services.Interfaces
         Task<IEnumerable<Word>> GetWordsFromDictionary(Dictionary dictionary);
         Task AddWordToDictionary(Word word, Dictionary dictionary);
         void RemoveWordFromDictionary(Word word, Dictionary dictionary);
-        bool IsWordInDictionary(Word word, Dictionary dictionary);
+        Task<bool> IsWordInDictionary(Word word, Dictionary dictionary);
 
         public Task Save();
     }

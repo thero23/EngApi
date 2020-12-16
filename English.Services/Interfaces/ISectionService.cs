@@ -10,9 +10,12 @@ namespace English.Services.Interfaces
 {
     public interface ISectionService
     {
-        IQueryable<Section> FindAllSections(bool trackChanges);
-        IQueryable<Section> FindSectionByCondition(Expression<Func<Section, bool>> expression,
+        Task<IEnumerable<Section>> FindAllSections(bool trackChanges);
+        Task<IEnumerable<Section>> FindSectionsByCondition(Expression<Func<Section, bool>> expression,
             bool trackChanges);
+        Task<IEnumerable<Section>> FindSectionsByIds(IEnumerable<Guid> ids, bool trackChanges);
+        IEnumerable<Subsection> FindSubsectionsInSection(Guid sectionId, bool trackChanges);
+
         Task CreateSection(Section entity);
         void UpdateSection(Section entity);
         void DeleteSection(Section entity);
@@ -22,19 +25,22 @@ namespace English.Services.Interfaces
         Task DeleteUserFromSection(string userId, Guid sectionId);
 
 
+        IEnumerable<Dictionary> FindDictionariesInSection(Guid sectionId);
+
         void AddSubsectionToSection(Guid subsectionId, Guid sectionId);
-        bool IsSubsectionInSection(Guid subsectionId, Guid sectionId);
-        Task DeleteSubsectionFromSection(Guid subsectionId, Guid sectionId);//реализовать
+        Task<bool> IsSubsectionInSection(Guid subsectionId, Guid sectionId);
+        Task DeleteSubsectionFromSection(Guid subsectionId);
+
 
         Task AddDictionaryToSection(Guid dictionaryId, Guid sectionId);
-        Task DeleteDictionaryFromSection(Guid dictionaryId, Guid sectionId);//реализовать
+        Task DeleteDictionaryFromSection(Guid dictionaryId, Guid sectionId);
         Task<bool> IsDictionaryInSection(Guid dictionaryId, Guid sectionId);
 
 
-        bool IsSectionExist( Guid id);
+        Task<bool> IsSectionExist( Guid id);
         bool IsSubsectionExist(Guid id);
         bool IsUserExist(string id);
-        bool IsDictionaryExist(Guid id);
+        Task<bool> IsDictionaryExist(Guid id);
        
 
         public Task Save();

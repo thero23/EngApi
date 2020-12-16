@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using AutoMapper;
 using Contracts;
 using Entities.Models;
 using English.Services.Interfaces;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -38,9 +38,9 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("", Name = "GetAllSections")]
-        public IActionResult GetAllSections()
+        public async Task<IActionResult> GetAllSections()
         {
-            var sections =  _service.FindAllSections(false);
+            var sections = await _service.FindAllSections(false);
 
             return Ok(sections);
         }
@@ -48,10 +48,10 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("{id}", Name = "GetSectionById")]
-        public IActionResult GetSectionById(Guid id)
+        public async Task<IActionResult> GetSectionById(Guid id)
         {
             
-            var section = _service.FindSectionByCondition(p=>p.Id == id,false);
+            var section =(await _service.FindSectionsByCondition(p=>p.Id == id,false)).FirstOrDefault();
            
             return Ok(section);
         }
@@ -69,7 +69,7 @@ namespace EnglishApi.Controllers
         [Route("{id}", Name = "DeleteSection")]
         public async Task<IActionResult> DeleteSection(Guid id)
         {
-            var  section = _service.FindSectionByCondition(p=>p.Id==id,true).FirstOrDefault();
+            var  section =(await _service.FindSectionsByCondition(p=>p.Id==id,true)).FirstOrDefault();
             if (section == null)
             {
                 return NotFound();
@@ -89,11 +89,29 @@ namespace EnglishApi.Controllers
             return Ok(section);
         }
 
+
+        //подразделы
+
+        [HttpGet]
+        [Route("{sectionId}/subsections")]
+        public async Task<IActionResult> GetSubsectionsFromSection(Guid sectionId)
+        {
+            if (!(await _service.IsSectionExist(sectionId)))
+            {
+
+                return NotFound();
+            }
+            var subsections = _service.FindSubsectionsInSection(sectionId,false);
+            return Ok(subsections);
+        }
+
+   
+
         [HttpPost]
         [Route("{sectionId}/subsections/{subsectionId}", Name = "AddSubsectionToSection")]
         public async Task<IActionResult> AddSubsectionToSection(Guid sectionId, Guid subsectionId)
         {
-            if (!_service.IsSectionExist(sectionId))
+            if (!(await _service.IsSectionExist(sectionId)))
             {
                 return NotFound();
             }
@@ -103,7 +121,7 @@ namespace EnglishApi.Controllers
                 return NotFound();
             }
 
-            if (_service.IsSubsectionInSection(subsectionId, sectionId))
+            if (await _service.IsSubsectionInSection(subsectionId, sectionId))
             {
                 return BadRequest();
             }
@@ -112,14 +130,39 @@ namespace EnglishApi.Controllers
             return Ok();
         }
 
-        
+        [HttpDelete]
+        [Route("{sectionId}/subsections/{subsectionId}", Name = "DeleteSubsectionFromSection")]
+        public async Task<IActionResult> DeleteSubsectionFromSection(Guid subsectionId, Guid sectionId)
+        {
+            if (!(await _service.IsSectionExist(sectionId)))
+            {
+                return BadRequest();
+
+            }
+
+            if (!_service.IsSubsectionExist(subsectionId))
+            {
+                return BadRequest();
+            }
+
+            if (!(await _service.IsSubsectionInSection(subsectionId, sectionId)))
+            {
+                return BadRequest();
+
+            }
+            await _service.DeleteSubsectionFromSection(subsectionId);
+            await _service.Save();
+            return Ok();
+        }
+
+        //пользователи
 
 
         [HttpPost]
         [Route("{sectionId}/users/{userId}", Name = "AddUserToSection")]
         public async Task<IActionResult> AddUserToSection(Guid sectionId, string userId)
         {
-            if (!_service.IsSectionExist(sectionId))
+            if (!(await _service.IsSectionExist(sectionId)))
             {
                 return NotFound();
 
@@ -144,7 +187,7 @@ namespace EnglishApi.Controllers
         [Route("{sectionId}/users/{userId}", Name = "DeleteUserFromSection")]
         public async Task<IActionResult> DeleteUserFromSection(Guid sectionId, string userId)
         {
-            if (!_service.IsSectionExist(sectionId))
+            if (!(await _service.IsSectionExist(sectionId)))
             {
                 return NotFound();
 
@@ -164,19 +207,36 @@ namespace EnglishApi.Controllers
             return Ok();
         }
 
+        
+        // словари
+
+
+        [HttpGet]
+        [Route("{sectionId}/dictionaries")]
+        public  async Task<IActionResult> GetDictionariesFromSection(Guid sectionId)
+        {
+            if (!(await _service.IsSectionExist(sectionId)))
+            {
+
+                return NotFound();
+            }
+            var dictionaries = _service.FindDictionariesInSection(sectionId);
+            return Ok(dictionaries);
+        }
+        
         [HttpPost]
         [Route("{sectionId}/dictionaries/{dictionaryId}", Name = "AddDictionaryToSection")]
         public async Task<IActionResult> AddDictionaryToSection(Guid sectionId, Guid dictionaryId)
         {
 
             
-            if (!_service.IsSectionExist(sectionId))
+            if (!(await _service.IsSectionExist(sectionId)))
             {
                 return NotFound();
 
             }
 
-            if (!_service.IsDictionaryExist(dictionaryId))
+            if (!(await _service.IsDictionaryExist(dictionaryId)))
             {
                 return NotFound();
             }
@@ -187,6 +247,31 @@ namespace EnglishApi.Controllers
             }
 
             await _service.AddDictionaryToSection(dictionaryId, sectionId);
+            await _service.Save();
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("{sectionId}/dictionaries/{dictionaryId}", Name = "DeleteDictionaryFromSection")]
+        public async Task<IActionResult> DeleteDictionaryFromSection(Guid dictionaryId, Guid sectionId)
+        {
+            if (!(await _service.IsSectionExist(sectionId)))
+            {
+                return NotFound();
+
+            }
+
+            if (!(await _service.IsDictionaryExist(dictionaryId)))
+            {
+                return NotFound();
+            }
+
+            if (!(await _service.IsDictionaryInSection(dictionaryId, sectionId)))
+            {
+                return NotFound();
+
+            }
+            await _service.DeleteDictionaryFromSection(dictionaryId, sectionId);
             await _service.Save();
             return Ok();
         }

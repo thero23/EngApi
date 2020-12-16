@@ -13,6 +13,7 @@ namespace English.Services.Interfaces
         IQueryable<Subsection> FindAllSubsections(bool trackChanges);
         IQueryable<Subsection> FindSubsectionByCondition(Expression<Func<Subsection, bool>> expression,
             bool trackChanges);
+      
         Task CreateSubsection(Subsection entity);
         void UpdateSubsection(Subsection entity);
         void DeleteSubsection(Subsection entity);

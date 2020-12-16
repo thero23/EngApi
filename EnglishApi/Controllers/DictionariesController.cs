@@ -22,7 +22,6 @@ namespace EnglishApi.Controllers
     [ApiController]
     public class DictionariesController : ControllerBase
     {
-        // private readonly IRepositoryManager _repository;
         private readonly IWordDictionaryService _service;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
@@ -31,14 +30,10 @@ namespace EnglishApi.Controllers
 
         public DictionariesController(IWordDictionaryService service, ILoggerManager logger, IMapper mapper)
         {
-
-           // _repository = repository;
-           _service = service; 
+            _service = service; 
            _logger = logger; 
            _mapper = mapper;
-
         }
-
 
         [HttpGet]
         [Route("words")]
@@ -75,7 +70,6 @@ namespace EnglishApi.Controllers
             {
                 wordsDto.Add(_mapper.Map<WordGetDto>(word));
             }
-            //var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
             return Ok(wordsDto);
 
 
@@ -83,9 +77,9 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("words/{id}", Name = "GetWordById")]
-        public IActionResult GetWordById(Guid id)
+        public async Task<IActionResult> GetWordById(Guid id)
         {
-            var word = _service.FindWordByCondition(p => p.Id.Equals(id) , false).FirstOrDefault();
+            var word =(await _service.FindWordByCondition(p => p.Id.Equals(id) , false)).FirstOrDefault();
             
             if (word == null)
             {
@@ -110,7 +104,6 @@ namespace EnglishApi.Controllers
             await _service.CreateWord(word);
             await _service.Save();
             return CreatedAtRoute(nameof(GetWordById), new { word.Id }, word);
-
         }
 
         [HttpPost]
@@ -136,7 +129,7 @@ namespace EnglishApi.Controllers
         public async Task<IActionResult> DeleteWord(Guid id)
         {
 
-            var item = _service.FindWordByCondition(p=>p.Id.Equals(id) ,true).FirstOrDefault();
+            var item =(await _service.FindWordByCondition(p => p.Id.Equals(id), true)).FirstOrDefault();
             if (item == null)
             {
                 _logger.LogInfo($"Word with id: {id} doesn't exist in the database.");
@@ -173,7 +166,7 @@ namespace EnglishApi.Controllers
                 return BadRequest("patchDoc object is null");
             }
 
-            var word = _service.FindWordByCondition(x => x.Id.Equals(id), true).FirstOrDefault();
+            var word = (await _service.FindWordByCondition(x => x.Id.Equals(id), true)).FirstOrDefault();
 
             if (word == null)
             {
@@ -202,24 +195,70 @@ namespace EnglishApi.Controllers
 
         [HttpGet]
         [Route("", Name = "GetAllDictionaries")]
-        public  IActionResult GetAllDictionaries()
+        public  async Task<IActionResult> GetAllDictionaries()
         {
-            var dictionaries =_service.FindAllDictionaries(false);
+            var dictionaries =await _service.FindAllDictionaries(false);
             var dictionariesDto = _mapper.Map<IEnumerable<DictionaryGetDto>>(dictionaries);
             return Ok(dictionariesDto);
         }
 
         [HttpGet]
         [Route("{id}", Name = "GetDictionaryById")]
-        public  IActionResult GetDictionaryById(Guid id)
+        public  async Task<IActionResult> GetDictionaryById(Guid id)
         {
-            var item = _service.FindDictionaryByCondition(p => p.Id.Equals(id), false);
+            var item =(await _service.FindDictionariesByCondition(p => p.Id.Equals(id), false)).FirstOrDefault();
             if (item == null)
             {
                 _logger.LogInfo($"Dictionary with id: {id} doesn't exist in the database.");
                 return NotFound();
             }
             return Ok(item);
+        }
+
+        [HttpGet]
+        [Route("collection/({ids})", Name = "GetDictionariesByIds")]
+        public async Task<IActionResult> GetDictionariesByIds([ModelBinder(BinderType =
+            typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+            {
+                _logger.LogError("Parameter ids is null");
+                return BadRequest("Parameter ids is null");
+            }
+
+            var dictionaries = await _service.FindDictionariesByIds(ids, false);
+            if (ids.Count() != dictionaries.Count())
+            {
+                _logger.LogError("Some ids are not valid in a collection");
+                return NotFound();
+            }
+
+            var dictionaryDto = new List<DictionaryGetDto>();
+            foreach (var dictionary in dictionaries)
+            {
+                dictionaryDto.Add(_mapper.Map<DictionaryGetDto>(dictionary));
+            }
+          
+            return Ok(dictionaryDto);
+        }
+
+
+        [HttpPost]
+        [Route("collection")]
+        public async Task<IActionResult> CreateDictionaryCollection([FromBody] IEnumerable<DictionaryCreateDto> dictionaryCollection)
+        {
+            var dictionaryCreateDtos = _mapper.Map<IEnumerable<Dictionary>>(dictionaryCollection);
+            foreach (var dictionary in dictionaryCreateDtos)
+            {
+                await _service.CreateDictionary(dictionary);
+            }
+
+            await _service.Save();
+
+            var dictionaryCollectionToReturn = _mapper.Map<IEnumerable<DictionaryGetDto>>(dictionaryCreateDtos);
+            var ids = string.Join(",", dictionaryCollectionToReturn.Select(c => c.Id));
+
+            return CreatedAtRoute(nameof(GetDictionariesByIds), new { ids }, dictionaryCollectionToReturn);
         }
 
         [HttpPost]
@@ -239,14 +278,12 @@ namespace EnglishApi.Controllers
             await _service.CreateDictionary(dictionary);
             await _service.Save();
             return CreatedAtRoute(nameof(GetDictionaryById), new { dictionary.Id }, dictionary);
-
         }
 
         [HttpPut]
         [Route("", Name = "UpdateDictionary")]
         public async Task<IActionResult> UpdateDictionary([FromBody] DictionaryUpdateDto dictionaryDto)
         {
-
             var dictionary = _mapper.Map<Dictionary>(dictionaryDto);
             _service.UpdateDictionary(dictionary);
             await _service.Save();
@@ -263,7 +300,7 @@ namespace EnglishApi.Controllers
                 return BadRequest("patchDoc object is null");
             }
 
-            var dictionary = _service.FindDictionaryByCondition(x => x.Id.Equals(id), true).FirstOrDefault();
+            var dictionary =(await _service.FindDictionariesByCondition(x => x.Id.Equals(id), true)).FirstOrDefault();
 
             if (dictionary == null)
             {
@@ -292,7 +329,7 @@ namespace EnglishApi.Controllers
         [Route("{id}", Name = "DeleteDictionary")]
         public async Task<IActionResult> DeleteDictionary(Guid id)
         {
-            var item = _service.FindDictionaryByCondition(p => p.Id.Equals(id), true).FirstOrDefault();
+            var item =(await _service.FindDictionariesByCondition(p => p.Id.Equals(id), true)).FirstOrDefault();
             if (item == null)
             {
                 _logger.LogInfo($"Dictionary with Id {id} doesn't exist in the database.");
@@ -303,16 +340,16 @@ namespace EnglishApi.Controllers
             return Ok();
         }
 
+
         //DictionaryWord
-        //api/dictionary/dictionary-word/..
+        //api/dictionary/{?}/words/{?}..
 
 
         [HttpGet]
         [Route("{id}/words", Name = "GetWordsFromDictionary")]
         public async Task<IActionResult> GetWordsFromDictionary(Guid id)
         {
-
-            var dictionary =  _service.FindDictionaryByCondition(p => p.Id.Equals(id), false).FirstOrDefault();
+            var dictionary =(await  _service.FindDictionariesByCondition(p => p.Id.Equals(id), false)).FirstOrDefault();
 
             if (dictionary == null)
             {
@@ -323,15 +360,14 @@ namespace EnglishApi.Controllers
             var words = (await _service.GetWordsFromDictionary(dictionary));
             var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
             return Ok(wordsDto);
-
         }
 
         [HttpPost]
         [Route("{dictionaryId}/words/{wordId}", Name = "AddWordToDictionary")]
         public async Task<IActionResult> AddWordToDictionary(Guid dictionaryId, Guid wordId)
         {
-            var dictionary = _service.FindDictionaryByCondition(p=>p.Id.Equals(dictionaryId) , false).FirstOrDefault();
-            var word = _service.FindWordByCondition(p => p.Id.Equals(wordId) , false).FirstOrDefault();
+            var dictionary = (await _service.FindDictionariesByCondition(p=>p.Id.Equals(dictionaryId) , false)).FirstOrDefault();
+            var word = (await _service.FindWordByCondition(p => p.Id.Equals(wordId) , false)).FirstOrDefault();
 
             if (word == null )
             {
@@ -346,7 +382,7 @@ namespace EnglishApi.Controllers
                 return NotFound();
             }
 
-            if (_service.IsWordInDictionary(word, dictionary))
+            if (!(await _service.IsWordInDictionary(word, dictionary)))
             {
                 _logger.LogInfo($"This word already exist in dictionary");
 
@@ -356,7 +392,6 @@ namespace EnglishApi.Controllers
             await _service.AddWordToDictionary(word,dictionary);
             await _service.Save();
             return Ok();
-
         }
 
 
@@ -364,8 +399,8 @@ namespace EnglishApi.Controllers
         [Route("{dictionaryId}/words/{wordId}", Name = "RemoveWordFromDictionary")]
         public async Task<IActionResult> RemoveWordFromDictionary(Guid wordId, Guid dictionaryId)
         {
-            var dictionary =_service.FindDictionaryByCondition(p => p.Id.Equals(dictionaryId), false).FirstOrDefault();
-            var word =_service.FindWordByCondition(p => p.Id.Equals(wordId) , false).FirstOrDefault();
+            var dictionary =(await _service.FindDictionariesByCondition(p => p.Id.Equals(dictionaryId), false)).FirstOrDefault();
+            var word =(await _service.FindWordByCondition(p => p.Id.Equals(wordId) , false)).FirstOrDefault();
 
             if (word == null)
             {
@@ -380,7 +415,7 @@ namespace EnglishApi.Controllers
                 return NotFound();
             }
 
-            if (!_service.IsWordInDictionary(word, dictionary))
+            if (!(await _service.IsWordInDictionary(word, dictionary)))
             {
                 _logger.LogInfo($"Word with id: {wordId} doesn't  exist in dictionary with id: {dictionaryId}");
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Contracts;
 using Entities.Models;
 using English.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace English.Services
 {
@@ -18,29 +19,38 @@ namespace English.Services
         {
             _repository = repository;
         }
-        public IQueryable<Section> FindAllSections(bool trackChanges)
+        public async Task<IEnumerable<Section>> FindAllSections(bool trackChanges)
         {
-            return  _repository.Section.FindAll(trackChanges);
+            return  await _repository.Section.GetAllSectionsAsync(trackChanges);
         }
 
-        public IQueryable<Section> FindSectionByCondition(Expression<Func<Section, bool>> expression, bool trackChanges)
+        public async Task<IEnumerable<Section>> FindSectionsByCondition(Expression<Func<Section, bool>> expression, bool trackChanges)
         {
-            return _repository.Section.FindByCondition(expression, trackChanges);
+            return await _repository.Section.GetSectionsByConditionAsync(expression, trackChanges);
+        }
+
+        public IEnumerable<Subsection> FindSubsectionsInSection(Guid sectionId, bool trackChanges)
+        {
+            return _repository.Subsection.FindByCondition(x => x.SectionId.Equals(sectionId),trackChanges);
+        }
+        public async Task<IEnumerable<Section>> FindSectionsByIds(IEnumerable<Guid> ids, bool trackChanges)
+        {
+            return await _repository.Section.GetByIdsAsync(ids, trackChanges);
         }
 
         public async Task CreateSection(Section entity)
         {
-           await _repository.Section.Create(entity);
+           await _repository.Section.CreateSectionAsync(entity);
         }
 
         public void UpdateSection(Section entity)
         {
-            _repository.Section.Update(entity);
+            _repository.Section.UpdateSection(entity);
         }
 
         public void DeleteSection(Section entity)
         {
-            _repository.Section.Delete(entity);
+            _repository.Section.DeleteSection(entity);
         }
 
         public async Task AddUserToSection(string userId, Guid sectionId)
@@ -58,21 +68,29 @@ namespace English.Services
             await _repository.Section.DeleteUserFromSection(userId, sectionId);
         }
 
+    
+
+
         public void AddSubsectionToSection(Guid subsectionId, Guid sectionId)
         {
             _repository.Section.AddSubsectionToSection(subsectionId, sectionId);
         }
 
-        public bool IsSubsectionInSection(Guid subsectionId, Guid sectionId)
+        public async Task<bool> IsSubsectionInSection(Guid subsectionId, Guid sectionId)
         {
-            return _repository.Section.IsSubsectionInSection(subsectionId, sectionId);
+            return await _repository.Section.IsSubsectionInSection(subsectionId, sectionId);
         }
 
-        public async Task DeleteSubsectionFromSection(Guid subsectionId, Guid sectionId)
+        public async Task DeleteSubsectionFromSection(Guid subsectionId)
         {
-            await _repository.Section.DeleteSubsectionFromSection(subsectionId, sectionId);
+            await _repository.Section.DeleteSubsectionFromSection(subsectionId);
         }
 
+
+        public IEnumerable<Dictionary> FindDictionariesInSection(Guid sectionId)
+        {
+            return _repository.Section.FindDictionariesInSection(sectionId);
+        }
         public async Task AddDictionaryToSection(Guid dictionaryId, Guid sectionId)
         {
             await _repository.Section.AddDictionaryToSection(dictionaryId, sectionId);
@@ -91,15 +109,15 @@ namespace English.Services
 
 
 
-        public bool IsSectionExist(Guid sectionId)
+        public async Task<bool> IsSectionExist(Guid sectionId)
         {
-            var section =  _repository.Section.FindByCondition(p => p.Id == sectionId, false).FirstOrDefault();
+            var section = (await _repository.Section.GetSectionsByConditionAsync(p => p.Id == sectionId, false)).FirstOrDefault();
             return section != null;
         }
 
-        public  bool IsDictionaryExist(Guid dictionaryId)
+        public  async Task<bool> IsDictionaryExist(Guid dictionaryId)
         {
-            var dictionary = _repository.Dictionary.FindByCondition(p => p.Id == dictionaryId, false).FirstOrDefault();
+            var dictionary = (await _repository.Dictionary.GetDictionariesByConditionAsync(p => p.Id == dictionaryId, false)).FirstOrDefault();
             return dictionary != null;
         }
 

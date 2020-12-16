@@ -21,63 +21,68 @@ namespace English.Services
 
 
         //words
-        public IQueryable<Word> FindAllWords(bool trackChanges)
+        public async Task<IEnumerable<Word>> FindAllWords(bool trackChanges)
         {
-            return _repository.Word.FindAll(trackChanges);
+            return await _repository.Word.GetAllWordsAsync(trackChanges);
         }
 
         
-        public IQueryable<Word> FindWordByCondition(Expression<Func<Word, bool>> expression, bool trackChanges)
+        public async Task<IEnumerable<Word>> FindWordByCondition(Expression<Func<Word, bool>> expression, bool trackChanges)
         {
-            return _repository.Word.FindByCondition(expression, trackChanges);
+            return await _repository.Word.GetWordsByConditionAsync(expression, trackChanges);
         }
 
         public async Task<IEnumerable<Word>> FindWordsByIds(IEnumerable<Guid> ids, bool trackChanges)
         {
-            return await _repository.Word.FindByIds(ids, trackChanges);
+            return await _repository.Word.GetByIdsAsync(ids, trackChanges);
         }
 
         public async Task CreateWord(Word entity)
         {
-            await _repository.Word.Create(entity);
+            await _repository.Word.CreateWordAsync(entity);
         }
 
         public void UpdateWord(Word entity)
         {
-            _repository.Word.Update(entity);
+            _repository.Word.UpdateWord(entity);
         }
 
         public void DeleteWord(Word entity)
         {
-            _repository.Word.Delete(entity);
+            _repository.Word.DeleteWord(entity);
         }
 
         
         // dictionaries
 
-        public IQueryable<Dictionary> FindAllDictionaries(bool trackChanges)
+        public async Task<IEnumerable<Dictionary>> FindAllDictionaries(bool trackChanges)
         {
-            return _repository.Dictionary.FindAll(trackChanges);
+            return await _repository.Dictionary.GetAllDictionariesAsync(trackChanges);
         }
 
-        public IQueryable<Dictionary> FindDictionaryByCondition(Expression<Func<Dictionary, bool>> expression, bool trackChanges)
+        public async Task<IEnumerable<Dictionary>> FindDictionariesByIds(IEnumerable<Guid> ids, bool trackChanges)
         {
-            return _repository.Dictionary.FindByCondition(expression, trackChanges);
+            return await _repository.Dictionary.GetByIdsAsync(ids, trackChanges);
+        }
+
+        public async Task<IEnumerable<Dictionary>> FindDictionariesByCondition(Expression<Func<Dictionary, bool>> expression, bool trackChanges)
+        {
+            return await _repository.Dictionary.GetDictionariesByConditionAsync(expression, trackChanges);
         }
 
         public async Task CreateDictionary(Dictionary entity)
         {
-            await _repository.Dictionary.Create(entity);
+            await _repository.Dictionary.CreateDictionaryAsync(entity);
         }
 
         public void UpdateDictionary(Dictionary entity)
         {
-            _repository.Dictionary.Update(entity);
+            _repository.Dictionary.UpdateDictionary(entity);
         }
 
         public void DeleteDictionary(Dictionary entity)
         {
-            _repository.Dictionary.Delete(entity);
+            _repository.Dictionary.DeleteDictionary(entity);
         }
 
 
@@ -98,9 +103,9 @@ namespace English.Services
             _repository.Word.RemoveWordFromDictionary(word,dictionary);
         }
 
-        public bool IsWordInDictionary(Word word, Dictionary dictionary)
+        public async Task<bool> IsWordInDictionary(Word word, Dictionary dictionary)
         {
-            return _repository.Word.IsWordInDictionary(word, dictionary);
+            return await _repository.Word.IsWordInDictionary(word, dictionary);
         }
 
 
