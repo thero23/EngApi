@@ -10,6 +10,7 @@ using Entities.Models;
 using English.Services.Interfaces;
 using English.Services;
 using English.Services.Mappings;
+using EnglishApi.ActionFilters;
 using EnglishApi.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -59,19 +60,8 @@ namespace EnglishApi
                     Configuration.GetConnectionString("EnglishConnection")));
 
             services.AddAuthentication();
-            var builder = services.AddIdentityCore<User>(o =>
-            {
-                o.Password.RequireDigit = true;
-                o.Password.RequireLowercase = false;
-                o.Password.RequireUppercase = false;
-                o.Password.RequireNonAlphanumeric = false;
-                o.Password.RequiredLength = 10;
-                o.User.RequireUniqueEmail = true;
-            });
-            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole),
-                builder.Services);
-            builder.AddEntityFrameworkStores<EnglishContext>()
-                .AddDefaultTokenProviders();
+            services.ConfigureIdentity();
+            services.ConfigureJWT(Configuration);
 
 
             
@@ -79,7 +69,8 @@ namespace EnglishApi
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISubsectionService, SubsectionService>();
             services.AddScoped<IUserService,UserService>();
-
+            services.AddScoped<ValidationFilterAttribute>();
+            services.AddScoped<IAuthenticationManager, AuthenticationManager>();
 
             var mapperConfig = new MapperConfiguration(mc =>
             {
@@ -127,6 +118,7 @@ namespace EnglishApi
                 ForwardedHeaders = ForwardedHeaders.All
             });
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

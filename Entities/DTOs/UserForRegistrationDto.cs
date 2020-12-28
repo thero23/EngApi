@@ -9,8 +9,8 @@ namespace Entities.DTOs
     public class UserForRegistrationDto
     {
         public string FirstName { get; set; }
-
         public string Lastname  { get; set; }
+        public string Patronymic { get; set; }
 
         [Required(ErrorMessage = "UserName is required")]
         public string UserName  { get; set; }

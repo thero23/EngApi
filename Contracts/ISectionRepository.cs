@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Entities.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Entities.Models;
 
 namespace Contracts
 {
@@ -27,7 +27,7 @@ namespace Contracts
         Task<bool> IsSubsectionInSection(Guid subsectionId, Guid sectionId);
         Task DeleteSubsectionFromSection(Guid subsectionId);
 
-      
+
 
         Task AddDictionaryToSection(Guid dictionaryId, Guid sectionId);
         Task DeleteDictionaryFromSection(Guid dictionaryId, Guid sectionId);//реализовать

@@ -9,6 +9,7 @@ using Entities.Models;
 using English.Services.Interfaces;
 using EnglishApi.ModelBinders;
 using Entities.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -35,12 +36,12 @@ namespace EnglishApi.Controllers
            _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Administrator, Teacher")]
         [Route("words")]
-        public  IActionResult GetAllWords()
+        public  async Task<IActionResult> GetAllWords()
         {
 
-            var words =  _service.FindAllWords(false);
+            var words =  await _service.FindAllWords(false);
             var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
             return Ok(wordsDto);
 
