@@ -1,0 +1,11 @@
+
+.AuthButton{
+    width: 40px;
+    cursor: pointer;
+    margin: 6px;
+   
+}
+
+.AuthButton:hover{
+    width: 43px;
+}

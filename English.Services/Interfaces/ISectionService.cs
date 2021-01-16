@@ -13,6 +13,8 @@ namespace English.Services.Interfaces
         Task<IEnumerable<Section>> FindAllSections(bool trackChanges);
         Task<IEnumerable<Section>> FindSectionsByCondition(Expression<Func<Section, bool>> expression,
             bool trackChanges);
+
+        Task<IEnumerable<Section>> FindSectionsByUser(User user);
         Task<IEnumerable<Section>> FindSectionsByIds(IEnumerable<Guid> ids, bool trackChanges);
         IEnumerable<Subsection> FindSubsectionsInSection(Guid sectionId, bool trackChanges);
 

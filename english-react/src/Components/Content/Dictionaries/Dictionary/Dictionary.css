@@ -1,0 +1,7 @@
+.Dictionary{
+    border: 1px solid black;
+    box-shadow:-1px 1px 10px black ;
+    width: 250px;
+    padding: 10px;
+    margin: 20px;
+}

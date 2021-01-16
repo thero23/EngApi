@@ -36,7 +36,8 @@ namespace EnglishApi.Controllers
            _mapper = mapper;
         }
 
-        [HttpGet, Authorize(Roles = "Administrator, Teacher")]
+        //, Authorize(Roles = "Administrator, Teacher")
+        [HttpGet]
         [Route("words")]
         public  async Task<IActionResult> GetAllWords()
         {
@@ -345,8 +346,8 @@ namespace EnglishApi.Controllers
         //DictionaryWord
         //api/dictionary/{?}/words/{?}..
 
-
-        [HttpGet]
+        
+        [HttpGet, Authorize(Roles = "Administrator, Teacher")]
         [Route("{id}/words", Name = "GetWordsFromDictionary")]
         public async Task<IActionResult> GetWordsFromDictionary(Guid id)
         {

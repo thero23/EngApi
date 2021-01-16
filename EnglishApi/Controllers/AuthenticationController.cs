@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Contracts;
@@ -35,7 +36,14 @@ namespace EnglishApi.Controllers
             _authManager = authManager;
         }
 
-        
+
+        [HttpGet, Authorize]
+        [Route("check")]
+        public IActionResult Check()
+        {
+            return Ok();
+        }
+
         [HttpPost]
         [Route("register")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]

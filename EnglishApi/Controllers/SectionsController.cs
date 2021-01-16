@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Contracts;
 using Entities.Models;
 using English.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
@@ -20,15 +23,16 @@ namespace EnglishApi.Controllers
     [ApiController]
     public class SectionsController : ControllerBase
     {
+        private readonly UserManager<User> _userManager;
         private readonly ISectionService _service;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
 
 
 
-        public SectionsController(ISectionService service, ILoggerManager logger, IMapper mapper)
+        public SectionsController(ISectionService service, ILoggerManager logger, IMapper mapper, UserManager<User> userManager)
         {
-
+            _userManager = userManager;
             _service = service;
             _logger = logger;
             _mapper = mapper;
@@ -36,13 +40,27 @@ namespace EnglishApi.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Administrator, Teacher")]
         [Route("", Name = "GetAllSections")]
         public async Task<IActionResult> GetAllSections()
         {
-            var sections = await _service.FindAllSections(false);
+            
+           var role = User.FindFirstValue(ClaimTypes.Role);
+            var user =await _userManager.FindByNameAsync(User.Identity.Name);
+            var isTeacher = User.IsInRole("Administrator") || User.IsInRole("Teacher");
 
-            return Ok(sections);
+
+
+            if (isTeacher)
+            {
+                var sections = await _service.FindAllSections(false);
+                return Ok(sections);
+            }
+
+          
+
+            var ret = new {Id = user.Id, Role =  role};
+            return Ok(ret);
         }
 
 
