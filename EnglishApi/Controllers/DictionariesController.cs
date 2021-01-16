@@ -347,7 +347,7 @@ namespace EnglishApi.Controllers
         //api/dictionary/{?}/words/{?}..
 
         
-        [HttpGet, Authorize(Roles = "Administrator, Teacher")]
+        [HttpGet, Authorize]
         [Route("{id}/words", Name = "GetWordsFromDictionary")]
         public async Task<IActionResult> GetWordsFromDictionary(Guid id)
         {

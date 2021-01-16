@@ -1,0 +1,18 @@
+.Sections{
+    margin: auto;
+    width: 80%;
+    border:1px solid black;
+    display: flex;
+
+}
+
+.Sections .Tree{
+    border:1px solid black;
+    width: 20%;
+}
+
+.Sections .Content{
+    width: 80%;
+    border:1px solid black;
+   
+}

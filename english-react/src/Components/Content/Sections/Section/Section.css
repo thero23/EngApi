@@ -1,0 +1,8 @@
+.Section{
+    margin: 10px;
+    border:1px solid black;
+}
+
+.Section:hover {
+    background-color: rgb(223, 213, 213);
+}

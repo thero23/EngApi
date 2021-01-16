@@ -132,5 +132,13 @@ namespace Repository
         {
             return _context.SectionDictionaries.AnyAsync(p=>p.DictionaryId==dictionaryId && p.SectionId==sectionId);
         }
+
+        public async Task<IEnumerable<Section>> GetSectionsByUser(User user)
+        {
+            var sectionIds = await _context.SectionUsers.Where(s=>s.UserId==user.Id).Select(p=>p.SectionId).ToListAsync();
+           var sections =  _context.Sections.Where(s => sectionIds.Contains(s.Id)).ToList();
+           return sections;
+        }
+        
     }
 }

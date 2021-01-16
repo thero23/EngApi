@@ -32,6 +32,7 @@ namespace Contracts
         Task AddDictionaryToSection(Guid dictionaryId, Guid sectionId);
         Task DeleteDictionaryFromSection(Guid dictionaryId, Guid sectionId);//реализовать
         Task<bool> IsDictionaryInSection(Guid dictionaryId, Guid sectionId);
+        Task<IEnumerable<Section>> GetSectionsByUser(User user);
 
 
 

@@ -40,27 +40,19 @@ namespace EnglishApi.Controllers
         }
 
 
-        [HttpGet, Authorize(Roles = "Administrator, Teacher")]
+        [HttpGet, Authorize]
         [Route("", Name = "GetAllSections")]
         public async Task<IActionResult> GetAllSections()
         {
             
-           var role = User.FindFirstValue(ClaimTypes.Role);
+           //var role = User.FindFirstValue(ClaimTypes.Role);
             var user =await _userManager.FindByNameAsync(User.Identity.Name);
             var isTeacher = User.IsInRole("Administrator") || User.IsInRole("Teacher");
 
+            var sections = isTeacher ? await _service.FindAllSections(false): await _service.FindSectionsByUser(user);
 
-
-            if (isTeacher)
-            {
-                var sections = await _service.FindAllSections(false);
-                return Ok(sections);
-            }
-
-          
-
-            var ret = new {Id = user.Id, Role =  role};
-            return Ok(ret);
+            return Ok(sections);
+            
         }
 
 

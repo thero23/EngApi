@@ -26,8 +26,8 @@ namespace English.Services
 
         public async Task<IEnumerable<Section>> FindSectionsByUser(User user)
         {
-            //var ids = await  _repository.Section.GetSectionsByConditionAsync()
-            return null;
+            var sections = await _repository.Section.GetSectionsByUser(user);
+            return sections;
         }
 
         public async Task<IEnumerable<Section>> FindSectionsByCondition(Expression<Func<Section, bool>> expression, bool trackChanges)

@@ -49,8 +49,12 @@ namespace EnglishApi.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistration)
         {
+           
             var user = _mapper.Map<User>(userForRegistration);
+            
             var result = await _userManager.CreateAsync(user, userForRegistration.Password);
+            
+            
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -59,7 +63,7 @@ namespace EnglishApi.Controllers
                 }
                 return BadRequest(ModelState);
             }
-            await _userManager.AddToRolesAsync(user, userForRegistration.Roles);
+            await _userManager.AddToRolesAsync(user, userForRegistration.Roles); 
             return StatusCode(201);
         }
 

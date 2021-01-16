@@ -16,7 +16,7 @@ const Navigation =(props)=>{
         .then(response=>changeAuth(true))
         .catch(error=>changeAuth(false));
 
-    });
+    },[]);
 
     return(
 
