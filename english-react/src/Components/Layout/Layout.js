@@ -7,6 +7,7 @@ import Tasks from '../Content/Tasks/Tasks';
 import Sections from '../Content/Sections/Sections';
 import Words from '../Content/Words/Words';
 import AuthForm from '../Authentication/AuthForm/AuthForm';
+import RegForm from '../Authentication/RegistrationForm/RegForm';
 
 const Layout = (props) => {
    
@@ -23,6 +24,7 @@ const Layout = (props) => {
                 <Route path="/help" component={Help} />
                 <Route path="/words" exact component={Words} />
                 <Route path="/authentication" component={AuthForm} />
+                <Route path="/registration" component={RegForm} />
 
             </Switch>
         </React.Fragment>

@@ -3,6 +3,7 @@ import './AuthForm.css';
 import axios from '../../../axios';
 import isAuthState from '../../../recoilStates/isAuthState';
 import { useRecoilState } from 'recoil';
+import { Link } from 'react-router-dom';
 
 const AuthForm = (props) => {
 
@@ -68,6 +69,9 @@ const AuthForm = (props) => {
                 <input type="submit" value="Log In" />
                 <div className="email">
                     <a href="/">Forgot password?</a>
+                </div>
+                <div className="email">
+                    <Link to='/registration'>Registration</Link>
                 </div>
                 <figure aria-hidden="true">
                     <div className="person-body"></div>
