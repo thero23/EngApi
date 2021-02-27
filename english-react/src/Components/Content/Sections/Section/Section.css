@@ -6,3 +6,7 @@
 .Section:hover {
     background-color: rgb(223, 213, 213);
 }
+
+.Subsections{
+    margin-left: 20px;
+}

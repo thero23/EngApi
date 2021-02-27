@@ -24,7 +24,7 @@ const AuthForm = (props) => {
             .then(response => {
                 localStorage.setItem('TOKEN', response.data.token);
                 changeAuth(true);
-                props.history.goBack(); //сделать так, чтобы не выходило с сайта,Если впервые заходишь
+                props.history.push('/');
             })
             .catch(error => {
                 alert("Wrong login or password. Please try again.")

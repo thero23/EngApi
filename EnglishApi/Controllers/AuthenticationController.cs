@@ -39,9 +39,12 @@ namespace EnglishApi.Controllers
 
         [HttpGet, Authorize]
         [Route("check")]
-        public IActionResult Check()
+        public async Task<IActionResult> Check()
         {
-            return Ok();
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var isTeacher = new {teacher = User.IsInRole("Administrator") || User.IsInRole("Teacher")};
+            
+            return Ok(isTeacher);
         }
 
         [HttpPost]

@@ -27,7 +27,8 @@ namespace Entities.Data
         public DbSet<Subsection> Subsections { get; set; }
         public DbSet<SectionDictionary> SectionDictionaries{ get; set; }
         public DbSet<SectionUser> SectionUsers { get; set; }
+        public DbSet<Answer> Answers { get; set; }
+        public DbSet<Exercise> Exercises { get; set; }
 
-     
     }
 }

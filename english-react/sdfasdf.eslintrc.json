@@ -1,0 +1,32 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "es6": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "airbnb"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 12,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "linebreak-style": 0,
+        "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }], //отключает требование обязатлеьного выноса jsx в отдельный файл
+        "react/destructuring-assignment": "off", //отключает обязательную деструктиризацию
+        "react/prop-types": "off", //отключает прототайпсы 
+        "no-param-reassign": "off", //отключает ошибки при при изменении входящих параметров
+        "no-console": "off", //отключает запрет на console.log()
+        "no-debugger": "off", //отключает запрет debugger
+        "max-len": "off", //отлючает проверку максмальной длинны строки
+        "react/jsx-props-no-spreading": "off" //отключает запрет на троеточие, к примеру {...props}
+    }
+}

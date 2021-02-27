@@ -329,7 +329,7 @@ namespace EnglishApi.Controllers
 
         [HttpDelete]
         [Route("{id}", Name = "DeleteDictionary")]
-        public async Task<IActionResult> DeleteDictionary(Guid id)
+        public async Task<IActionResult> DeleteDictionary(Guid id)   
         {
             var item =(await _service.FindDictionariesByCondition(p => p.Id.Equals(id), true)).FirstOrDefault();
             if (item == null)

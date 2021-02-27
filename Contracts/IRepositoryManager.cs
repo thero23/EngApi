@@ -9,7 +9,8 @@ namespace Contracts
         ISectionRepository Section { get; }
         ISubsectionRepository Subsection { get; }
         IUserRepository User { get; }
-
+        IAnswerRepository Answer { get; }
+        IExerciseRepository Exercise { get; }
 
 
         Task Save();

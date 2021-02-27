@@ -19,6 +19,30 @@ namespace Entities.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Entities.Models.Answer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ExerciseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.ToTable("Answers");
+                });
+
             modelBuilder.Entity("Entities.Models.Dictionary", b =>
                 {
                     b.Property<Guid>("Id")
@@ -59,6 +83,25 @@ namespace Entities.Migrations
                     b.HasIndex("WordId");
 
                     b.ToTable("DictionaryWords");
+                });
+
+            modelBuilder.Entity("Entities.Models.Exercise", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Exercises");
                 });
 
             modelBuilder.Entity("Entities.Models.Section", b =>
@@ -270,29 +313,6 @@ namespace Entities.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "f0c7b218-62c3-4ba5-a9f4-6bb5006c2813",
-                            ConcurrencyStamp = "ae1ac6fe-9f91-49d4-a097-a4a39926c5fa",
-                            Name = "Teacher",
-                            NormalizedName = "TEACHER"
-                        },
-                        new
-                        {
-                            Id = "1d11bb24-6379-4ef2-936c-bfff4c3f8f52",
-                            ConcurrencyStamp = "3999ab73-eec0-49c1-b8a8-656d7684b2a0",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
-                        },
-                        new
-                        {
-                            Id = "866d02cd-e2d2-4942-8951-f66425c2c83d",
-                            ConcurrencyStamp = "2ed660b0-b04a-4715-b514-8c538b6bd468",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -397,6 +417,13 @@ namespace Entities.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Entities.Models.Answer", b =>
+                {
+                    b.HasOne("Entities.Models.Exercise", "Exercise")
+                        .WithMany("Answers")
+                        .HasForeignKey("ExerciseId");
                 });
 
             modelBuilder.Entity("Entities.Models.DictionaryWord", b =>

@@ -1,11 +1,10 @@
 import {
-    atom
-  } from 'recoil';
+  atom,
+} from 'recoil';
 
+const isAuthState = atom({
+  key: 'isAuthState',
+  default: null,
+});
 
-  const isAuthState = atom({
-    key: 'isAuthState',
-    default: null
-  });
-
-  export default isAuthState;
+export default isAuthState;

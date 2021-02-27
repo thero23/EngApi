@@ -1,41 +1,37 @@
-import React, { Component } from 'react';
-import Word from './Word/Word';
+import React, { useState, useEffect } from 'react';
 import './Words.css';
 import axios from '../../../axios';
+import { DataGrid } from '@material-ui/data-grid';
+import { useHistory } from 'react-router';
 
-class Words extends Component{
-    state = {
-        words:[]
-    }
-    
-    componentDidMount(){
-        let toUrl;
-        this.props.match.params.dictId ? toUrl=this.props.match.params.dictId+"/words":toUrl="words";
-        axios.get("/dictionaries/"+toUrl)
-            .then(response=>{
-                const words = response.data;
-                this.setState({words: words});
-            })
-            .catch(error=>{
-                this.props.history.push("/authentication");
-            })
-    }
-    render(){
-        const words = this.state.words.map(word=>{
-            return(
-                <Word key={word.id} translate={word.translate} original={word.original}/>
-            );
-        })
+const columns = [
+  { field: 'id', headerName: 'ID', width: 70 },
+  { field: 'original', headerName: 'Original', width: 130 },
+  { field: 'translate', headerName: 'Translate', width: 130 },
+];
+const Words = (props) => {
+  const [words, changeWords] = useState([]);
+  const history = useHistory();
 
-        return(
-            <div className="Words">
-               {words}
-            </div>
-    
-        );
-    }
+  useEffect(() => {
+    let toUrl = 'words';
+    props.match.params.dictId ? toUrl = props.match.params.dictId + "/words" : toUrl = "words";
+    axios.get("/dictionaries/" + toUrl)
+      .then(response => {
+        const words = response.data;
+        changeWords(words);
+      })
+      .catch(error => {
+        history.push("/authentication");
+      })
+  }, [])
+
+  return (
+    <div style={{ height: 400, width: '100%' }}>
+      <DataGrid rows={words} columns={columns} pageSize={5} checkboxSelection />
+    </div>
+  );
 }
-   
 
 
 export default Words;

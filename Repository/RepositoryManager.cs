@@ -13,7 +13,8 @@ namespace Repository
         private ISectionRepository _sectionRepository;
         private ISubsectionRepository _subsectionRepository;
         private IUserRepository _userRepository;
-    
+        private IAnswerRepository _answerRepository;
+        public IExerciseRepository _exerciseRepository;
 
         public RepositoryManager(EnglishContext context)
         {
@@ -72,7 +73,29 @@ namespace Repository
             }
         }
 
-      
+        public IAnswerRepository Answer
+        {
+            get
+            {
+                if (_answerRepository == null)
+                    _answerRepository = new AnswerRepository(_context);
+                return _answerRepository;
+            }
+        }
+
+        public IExerciseRepository Exercise
+        {
+            get
+            {
+                if (_exerciseRepository == null)
+                    _exerciseRepository = new ExerciseRepository(_context);
+                return _exerciseRepository;
+            }
+        }
+
+
+
+
         public async Task Save() => await _context.SaveChangesAsync();
     }
 }

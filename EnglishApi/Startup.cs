@@ -69,6 +69,7 @@ namespace EnglishApi
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISubsectionService, SubsectionService>();
             services.AddScoped<IUserService,UserService>();
+            services.AddScoped<IExerciseAnswerService, ExerciseAnswerService>();
             services.AddScoped<ValidationFilterAttribute>();
             services.AddScoped<IAuthenticationManager, AuthenticationManager>();
 
@@ -80,10 +81,6 @@ namespace EnglishApi
             IMapper mapper = mapperConfig.CreateMapper();
 
             services.AddSingleton(mapper);
-
-
-
-
 
 
             services.AddControllers(config =>
