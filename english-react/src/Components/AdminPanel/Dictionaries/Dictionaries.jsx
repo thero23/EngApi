@@ -15,11 +15,13 @@ import EditDictionary from './EditDictionary';
 import DeleteDictionary from './DeleteDictionary';
 import { Dialog } from '@material-ui/core';
 import Rows from './words/Rows';
+import SearchBar from '../SearchBar';
 
 const Dictionaries = () => {
   const [dictionaries, changeDictionaries] = useState([]);
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState({});
+  const [search, setSearch] = useState([]);
   const handleClickOpen = (name, id) => {
     switch (name) {
       case 'add': setModal(<AddDictionary handleClose={handleClose} getItems={getItems} />)
@@ -38,10 +40,16 @@ const Dictionaries = () => {
     setOpen(false);
   };
 
+  const searchFilter = (items, text) => {
+    return items.filter(dict => dict.name.toLowerCase().includes(text.toLowerCase())
+      || dict.secretName.toLowerCase().includes(text.toLowerCase()));
+  }
+
   const getItems = () => {
     axios.get(`/dictionaries/`)
       .then(response => {
         const dictionaries = response.data;
+        setSearch(dictionaries);
         changeDictionaries(dictionaries);
       })
       .catch(error => {
@@ -54,22 +62,30 @@ const Dictionaries = () => {
 
   return (
     <>
-      <IconButton aria-label="add" onClick={() => handleClickOpen('add')} >
-        <AddCircleTwoTone fontSize="large" style={{ color: blue[500] }} />
-      </IconButton>
-      <TableContainer component={Paper}>
-        <Table aria-label="collapsible table">
+      <div className='panel-header'>
+        <IconButton aria-label="add" onClick={() => handleClickOpen('add')} >
+          <AddCircleTwoTone fontSize="large" style={{ color: blue[500] }} />
+        </IconButton>
+        <SearchBar
+          allItems={dictionaries}
+          setSearch={setSearch}
+          filter={searchFilter}
+        />
+      </div>
+      <TableContainer component={Paper}  style={{ minHeight: '60vh' }}>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell />
               <TableCell>Name</TableCell>
               <TableCell>Secret Name</TableCell>
-              <TableCell />
+              <TableCell>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {dictionaries.map((row) => (
-              <Rows key={row.id} row={row} actions={handleClickOpen} setModal={setModal} setOpen={setOpen} handleClose={handleClose} />
+            {search.map((dictionary) => (
+              <Rows key={dictionary.id} dictionary={dictionary} actions={handleClickOpen} setModal={setModal} setOpen={setOpen} handleClose={handleClose} />
             ))}
           </TableBody>
         </Table>

@@ -70,7 +70,15 @@ namespace Repository
 
         }
 
-      
+        public IQueryable<Dictionary> FindDictionariesNotInSection(Guid sectionId)
+        {
+            var dictionariesId = _context.SectionDictionaries.Where(p => p.SectionId.Equals(sectionId)).Select(p => p.DictionaryId).ToList();
+
+            return _context.Dictionaries.Where(p => !dictionariesId.Contains(p.Id));
+
+
+        }
+
 
         public void AddSubsectionToSection(Guid subsectionId, Guid sectionId)
         {

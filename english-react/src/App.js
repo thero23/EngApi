@@ -20,7 +20,7 @@ axios.interceptors.request.use(
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter /* basename="/englishcourse" */>
       <RecoilRoot>
         <div className="App">
           <Layout />

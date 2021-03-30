@@ -28,8 +28,6 @@ namespace EnglishApi.Controllers
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
 
-
-
         public SectionsController(ISectionService service, ILoggerManager logger, IMapper mapper, UserManager<User> userManager)
         {
             _userManager = userManager;
@@ -39,13 +37,13 @@ namespace EnglishApi.Controllers
 
         }
 
-
         [HttpGet, Authorize]
         [Route("", Name = "GetAllSections")]
         public async Task<IActionResult> GetAllSections()
         {
             
            //var role = User.FindFirstValue(ClaimTypes.Role);
+         
             var user =await _userManager.FindByNameAsync(User.Identity.Name);
             var isTeacher = User.IsInRole("Administrator") || User.IsInRole("Teacher");
 
@@ -72,7 +70,7 @@ namespace EnglishApi.Controllers
         {
             await _service.CreateSection(section);
             await _service.Save();
-            return CreatedAtRoute(nameof(GetSectionById), section.Id, section);
+            return Ok();
         }
 
         [HttpDelete]
@@ -167,7 +165,22 @@ namespace EnglishApi.Controllers
 
         //пользователи
 
+        [HttpGet]
+        [Route("{id}/users", Name = "GetUsersBySectionId")]
+        public  IActionResult GetUsersBySectionId(Guid id)
+        {
+            var users = _userManager.GetUsersInRoleAsync("User").Result.Where(u=> _service.IsHasAccess(u.Id, id).Result);
+            return Ok(users);
+        }
 
+        [HttpGet]
+        [Route("{id}/notusers", Name = "GetNotInSectionUsers")]
+        public IActionResult GetNotInSectionUsers(Guid id)
+        {
+            var users = _userManager.GetUsersInRoleAsync("User").Result.Where(u =>
+                !(_service.IsHasAccess(u.Id, id).Result));
+            return Ok(users);
+        }
         [HttpPost]
         [Route("{sectionId}/users/{userId}", Name = "AddUserToSection")]
         public async Task<IActionResult> AddUserToSection(Guid sectionId, string userId)
@@ -233,7 +246,21 @@ namespace EnglishApi.Controllers
             var dictionaries = _service.FindDictionariesInSection(sectionId);
             return Ok(dictionaries);
         }
-        
+
+        [HttpGet]
+        [Route("{sectionId}/notdictionaries")]
+        public async Task<IActionResult> GetDictionariesNotInSection(Guid sectionId)
+        {
+            if (!(await _service.IsSectionExist(sectionId)))
+            {
+
+                return NotFound();
+            }
+            var dictionaries = _service.FindDictionariesNotInSection(sectionId);
+           
+            return Ok(dictionaries);
+        }
+
         [HttpPost]
         [Route("{sectionId}/dictionaries/{dictionaryId}", Name = "AddDictionaryToSection")]
         public async Task<IActionResult> AddDictionaryToSection(Guid sectionId, Guid dictionaryId)

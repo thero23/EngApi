@@ -37,6 +37,7 @@ namespace English.Services.Interfaces
         Task AddDictionaryToSection(Guid dictionaryId, Guid sectionId);
         Task DeleteDictionaryFromSection(Guid dictionaryId, Guid sectionId);
         Task<bool> IsDictionaryInSection(Guid dictionaryId, Guid sectionId);
+        IEnumerable<Dictionary> FindDictionariesNotInSection(Guid sectionId);
 
 
         Task<bool> IsSectionExist( Guid id);

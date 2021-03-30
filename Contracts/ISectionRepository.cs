@@ -21,6 +21,8 @@ namespace Contracts
         Task<bool> IsHasAccess(string userId, Guid sectionId);
         Task DeleteUserFromSection(string userId, Guid sectionId);
 
+        IQueryable<Dictionary> FindDictionariesNotInSection(Guid sectionId);
+
 
         public IQueryable<Dictionary> FindDictionariesInSection(Guid sectionId);
         void AddSubsectionToSection(Guid subsectionId, Guid sectionId);

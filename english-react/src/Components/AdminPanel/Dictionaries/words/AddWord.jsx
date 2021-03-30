@@ -1,62 +1,88 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import axios from '../../../../axios';
+import IconButton from '@material-ui/core/IconButton';
+import { AddCircleTwoTone } from '@material-ui/icons';
+import { blue } from '@material-ui/core/colors';
+import { TableCell, TableHead, TableRow } from '@material-ui/core';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableContainer from '@material-ui/core/TableContainer';
+import Paper from '@material-ui/core/Paper';
 
-export default function AddWord({ handleClose, getItems }) {
-  const [translate, setTranslate] = useState('');
-  const [original, setOriginal] = useState('');
-  const [isDisabled, setIsDisabled] = useState(true);
-  const saveWord = () => {
-    axios.post('dictionaries/words', { original, translate })
+
+export default function AddWord({ handleClose, getItems, dictionaryId }) {
+  const [words, setWords] = useState([]);
+  const [newWords, setNewWords] = useState([]);
+
+  const saveWord = (wordId) => {
+    axios.post(`dictionaries/${dictionaryId}/words/${wordId}`)
       .then((response) => {
         getItems();
-        handleClose();
+        alert('Word has been added')
       }).catch(error => {
-        alert(error);
+        alert('Word already in dictionary');
       })
   }
 
+  const getDictionaryWords = () => {
+    axios.get(`dictionaries/${dictionaryId}/words`)
+      .then((response) => {
+        setNewWords(response.data);
+      }).catch(error => {
+      })
+  }
   useEffect(() => {
-    setIsDisabled(!original.length || !translate.length);
-  }, [original, translate])
+    getDictionaryWords();
+    getNewWords();
+  }, [words])
+
+  const getNewWords = () => {
+    axios.get(`dictionaries/words`)
+    .then((response) => {
+      const data = response.data;
+      const myArray = data.filter(el => !newWords.includes(el));
+      setWords(myArray);
+    }).catch(error => {
+    })
+  }
+  useEffect(() => {
+    getDictionaryWords();
+    getNewWords();
+  }, [])
 
   return (
     <div>
       <DialogTitle id="form-dialog-title">Add Word</DialogTitle>
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="name"
-          label="Original"
-          value={original}
-          onChange={(e) => setOriginal(e.target.value)}
-          type="text"
-          fullWidth
-          autoComplete={false}
-        />
-      </DialogContent>
-      <DialogContent>
-        <TextField
-          margin="dense"
-          label="Translate"
-          value={translate}
-          onChange={(e) => setTranslate(e.target.value)}
-          type="text"
-          fullWidth
-          multiline
-        />
-      </DialogContent>
+      <TableContainer component={Paper}>
+        <Table aria-label="collapsible table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Original</TableCell>
+              <TableCell>Translate</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {words.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.original}</TableCell>
+                <TableCell>{row.translate}</TableCell>
+                <TableCell>
+                  <IconButton aria-label="edit" onClick={() => saveWord(row.id)}>
+                    <AddCircleTwoTone fontSize="default" style={{ color: blue[500] }} />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
       <DialogActions>
         <Button onClick={handleClose} color="primary">
           Cancel
-        </Button>
-        <Button onClick={saveWord}  disabled={isDisabled} color="primary">
-          Add
         </Button>
       </DialogActions>
     </div>

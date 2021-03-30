@@ -57,7 +57,7 @@ namespace EnglishApi.Controllers
         {
             await _service.CreateExercise(exercise);
             await _service.Save();
-            return CreatedAtRoute(nameof(GetExerciseById), exercise.Id, exercise);
+            return CreatedAtRoute(nameof(GetExerciseById), new { exercise.Id }, exercise);
         }
 
         [HttpDelete]

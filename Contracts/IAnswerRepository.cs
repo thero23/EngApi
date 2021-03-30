@@ -10,7 +10,6 @@ namespace Contracts
     public interface IAnswerRepository
     {
         Task<IEnumerable<Answer>> GetAnswersByExercise(Guid id, bool trackChanges);
-
     }
 
 }

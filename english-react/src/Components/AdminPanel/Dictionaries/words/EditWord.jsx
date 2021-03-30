@@ -31,7 +31,6 @@ export default function AddWord({ handleClose, getItems, wordId }) {
     }
     axios.put('dictionaries/words', word)
       .then((response) => {
-        console.log('blabla');
         getItems();
         handleClose();
       }).catch(error => {

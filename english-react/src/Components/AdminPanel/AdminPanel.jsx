@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -8,6 +8,11 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Dictionaries from './Dictionaries/Dictionaries';
 import Words from './Words/Words';
+import Exercises from './Exercises/Exercises';
+import Sections from './Sections/Sections';
+import axios from '../../axios';
+import Users from './Users/Users';
+import './AdminPanel.css';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -50,15 +55,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AdminPanel() {
+const AdminPanel = () => {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  useEffect(() => {
+      axios.get('authentication/checkadmin')
+        .then((response) => {
+          setIsAdmin(response.data.admin);
+        }).catch(error => {
+          alert(error)
+        })
+  }, [])
   return (
-    <div className={classes.root}>
+    <div className='admin-panel'>
       <AppBar position="static" color="default">
         <Tabs
           value={value}
@@ -71,37 +85,28 @@ export default function AdminPanel() {
         >
           <Tab label="Words" {...a11yProps(0)} />
           <Tab label="Dictionaries"  {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
-          <Tab label="Item Four"  {...a11yProps(3)} />
-          <Tab label="Item Five"  {...a11yProps(4)} />
-          <Tab label="Item Six"  {...a11yProps(5)} />
-          <Tab label="Item Seven"  {...a11yProps(6)} />
+          <Tab label="Exercises" {...a11yProps(2)} />
+          <Tab label="Sections"  {...a11yProps(3)} />
+          {(isAdmin && <Tab label="Users"  {...a11yProps(4)} />)}
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <h1>Words</h1>
         <Words />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <h1>Dictionaries</h1>
         <Dictionaries />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        <Exercises />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        Item Four
+        <Sections />
       </TabPanel>
-      <TabPanel value={value} index={4}>
-        Item Five
-      </TabPanel>
-      <TabPanel value={value} index={5}>
-        Item Six
-      </TabPanel>
-      <TabPanel value={value} index={6}>
-        Item Seven
-      </TabPanel>
-
+      {(isAdmin) && <TabPanel value={value} index={4}>
+        <Users />
+      </TabPanel>}
     </div>
   );
 }
+
+export default AdminPanel;

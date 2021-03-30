@@ -1,19 +1,22 @@
 .Sections{
     margin: auto;
-    width: 80%;
-    border:1px solid black;
+    border: 1px solid black;
     display: flex;
-
+    height: 75vh;
+    box-sizing: border-box;
+    margin: 5px;
 }
 
 .Sections .Tree{
     border:1px solid black;
     width: 25%;
+    overflow-y: auto;
 }
 
 .Sections .Content{
     width: 75%;
     border:1px solid black;
+    overflow-y: auto;
    
 }
 

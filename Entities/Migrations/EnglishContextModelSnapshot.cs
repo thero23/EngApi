@@ -193,6 +193,27 @@ namespace Entities.Migrations
                     b.ToTable("Subsections");
                 });
 
+            modelBuilder.Entity("Entities.Models.SubsectionExercise", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SubsectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("SubsectionId");
+
+                    b.ToTable("SubsectionExercises");
+                });
+
             modelBuilder.Entity("Entities.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -313,6 +334,29 @@ namespace Entities.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "7650461a-2dce-4555-b7e2-96b89ea2de42",
+                            ConcurrencyStamp = "a30ef222-a42e-4109-a2cc-b86ff985c328",
+                            Name = "Teacher",
+                            NormalizedName = "TEACHER"
+                        },
+                        new
+                        {
+                            Id = "622fb086-c855-43d7-a86d-386cf9368c48",
+                            ConcurrencyStamp = "a6bbe032-2f92-42c0-8780-8269421330ce",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        },
+                        new
+                        {
+                            Id = "380e2697-47ab-44b4-a3e8-21ddadc5d94e",
+                            ConcurrencyStamp = "941aa22d-56b4-4b1e-8c6b-bd81f687b394",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -421,7 +465,7 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.Answer", b =>
                 {
-                    b.HasOne("Entities.Models.Exercise", "Exercise")
+                    b.HasOne("Entities.Models.Exercise", null)
                         .WithMany("Answers")
                         .HasForeignKey("ExerciseId");
                 });
@@ -476,6 +520,21 @@ namespace Entities.Migrations
                     b.HasOne("Entities.Models.Section", "Section")
                         .WithMany("Subsections")
                         .HasForeignKey("SectionId");
+                });
+
+            modelBuilder.Entity("Entities.Models.SubsectionExercise", b =>
+                {
+                    b.HasOne("Entities.Models.Exercise", "Exercise")
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entities.Models.Subsection", "Subsection")
+                        .WithMany()
+                        .HasForeignKey("SubsectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

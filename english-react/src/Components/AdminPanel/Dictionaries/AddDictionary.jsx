@@ -25,7 +25,7 @@ export default function AddWord({ handleClose, getItems }) {
         getItems();
         handleClose();
       }).catch((error) => {
-        console.log(error);
+        
       });
   };
   const handleAlertClose = (event, reason) => {

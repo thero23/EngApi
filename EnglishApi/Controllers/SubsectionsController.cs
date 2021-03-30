@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using AutoMapper;
 using Contracts;
@@ -44,7 +45,7 @@ namespace EnglishApi.Controllers
         [Route("{id}", Name = "GetSubsectionById")]
         public IActionResult GetSubsectionById(Guid id)
         {
-            var subsection = _service.FindSubsectionByCondition(p => p.Id == id, false);
+            var subsection = _service.FindSubsectionByCondition(p => p.Id == id, false).FirstOrDefault();
 
 
             return Ok(subsection);
@@ -56,7 +57,7 @@ namespace EnglishApi.Controllers
         {
             await _service.CreateSubsection(subsection);
             await _service.Save();
-            return CreatedAtRoute(nameof(GetSubsectionById), subsection.Id, subsection);
+            return Ok();
         }
 
         [HttpDelete]
@@ -82,5 +83,46 @@ namespace EnglishApi.Controllers
             await _service.Save();
             return Ok(subsection);
         }
+
+
+        // exercises
+
+        [HttpGet]
+        [Route("{subsectionId}/exercises", Name= "GetExercisesFromSubsection")]
+        public async Task<IActionResult> GetExercisesFromSubsection(Guid subsectionId)
+        {
+            var exercises = await _service.GetExercisesFromSubsection(subsectionId);
+
+            return Ok(exercises);
+        }
+
+        [HttpGet]
+        [Route("{subsectionId}/notExercises/", Name = "GetExercisesNotInSubsection")]
+        public async Task<IActionResult> GetExercisesNotInSubsection(Guid subsectionId)
+        {
+            var exercises = await _service.GetExercisesNotInSubsection(subsectionId);
+
+            return Ok(exercises);
+        }
+
+
+        [HttpPost]
+        [Route("{subsectionId}/exercise/{exerciseId}", Name = "AddExerciseToSubsection")]
+        public async Task<IActionResult> AddExerciseToSubsection(Guid subsectionId, Guid exerciseId)
+        {
+            await _service.AddExerciseToSubsection(exerciseId, subsectionId);
+            await _service.Save();
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("{subsectionId}/exercise/{exerciseId}", Name = "RemoveExerciseFromSubsection")]
+        public  async Task<IActionResult> RemoveExerciseFromSubsection(Guid subsectionId, Guid exerciseId)
+        {
+            _service.RemoveExerciseFromSubsection(exerciseId, subsectionId);
+            await _service.Save();
+            return NoContent();
+        }
+
     }
 }

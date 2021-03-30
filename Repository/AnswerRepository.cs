@@ -12,8 +12,10 @@ namespace Repository
 {
     class AnswerRepository: BaseRepository<Answer>, IAnswerRepository
     {
+        private EnglishContext _context;
         public AnswerRepository(EnglishContext context) : base(context)
         {
+            _context = context;
         }
 
 
@@ -21,6 +23,8 @@ namespace Repository
         {
             return await FindByCondition( p => p.Id.Equals(id), trackChanges).ToListAsync();
         }
+
+
     }
 }
 

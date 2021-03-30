@@ -2,33 +2,31 @@ import React, { useState, useEffect } from 'react';
 import './Words.css';
 import axios from '../../../axios';
 import { DataGrid } from '@material-ui/data-grid';
-import { useHistory } from 'react-router';
+import { Button } from '@material-ui/core';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
   { field: 'original', headerName: 'Original', width: 130 },
   { field: 'translate', headerName: 'Translate', width: 130 },
 ];
-const Words = (props) => {
+const Words = ({dictionaryId, setSelectedDict}) => {
   const [words, changeWords] = useState([]);
-  const history = useHistory();
 
   useEffect(() => {
-    let toUrl = 'words';
-    props.match.params.dictId ? toUrl = props.match.params.dictId + "/words" : toUrl = "words";
-    axios.get("/dictionaries/" + toUrl)
+    axios.get(`dictionaries/${dictionaryId}/words`)
       .then(response => {
         const words = response.data;
         changeWords(words);
       })
       .catch(error => {
-        history.push("/authentication");
+        alert(error);
       })
   }, [])
 
   return (
     <div style={{ height: 400, width: '100%' }}>
       <DataGrid rows={words} columns={columns} pageSize={5} checkboxSelection />
+      <Button onClick={() => setSelectedDict(null)}>Back</Button>
     </div>
   );
 }

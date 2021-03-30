@@ -17,6 +17,14 @@ namespace English.Services.Interfaces
         Task CreateSubsection(Subsection entity);
         void UpdateSubsection(Subsection entity);
         void DeleteSubsection(Subsection entity);
+
+
+        Task<IEnumerable<Exercise>> GetExercisesFromSubsection(Guid subsectionId);
+        Task AddExerciseToSubsection(Guid exerciseId, Guid subsectionId);
+        void RemoveExerciseFromSubsection(Guid exerciseId, Guid subsectionId);
+        Task<bool> IsExerciseInSubsection(Guid exerciseId, Guid subsectionId);
+        public Task<IEnumerable<Exercise>> GetExercisesNotInSubsection(Guid subsectionId);
+
         public Task Save();
 
     }

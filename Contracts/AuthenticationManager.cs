@@ -42,8 +42,8 @@ namespace Contracts
 
         private SigningCredentials GetSigningCredentials()
         {
-            var key =
-                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET"));
+            //var key =Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET"));
+            var key = Encoding.UTF8.GetBytes("EnglishApiSecretKey");
             var secret = new SymmetricSecurityKey(key);
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }

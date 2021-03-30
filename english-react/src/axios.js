@@ -1,9 +1,8 @@
 import axios from 'axios';
 
-
-
 const instance = axios.create({
-    baseURL:'https://10.188.8.26:5001/api/' 
+     baseURL:'https://arreis.ru:2540/api/' 
+    /*  baseURL: 'https://127.0.0.1:5001/api/'  */
 });
 
 export default instance;

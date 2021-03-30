@@ -17,10 +17,6 @@ namespace Entities.Models
         [Required(ErrorMessage = "Order is a required field.")]
         public int Order { get; set; }
 
-        public Guid? ExerciseId { get; set; }
-
-        [ForeignKey("ExerciseId")]
-        public Exercise Exercise { get; set; }
 
     }
 }

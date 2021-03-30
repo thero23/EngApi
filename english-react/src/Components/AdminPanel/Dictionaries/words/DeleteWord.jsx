@@ -6,15 +6,17 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import axios from '../../../../axios';
 
-export default function DeleteWord({handleClose,getItems, wordId}) {
+export default function DeleteWord({handleClose, getItems, wordId, dictionaryId}) {
   const deleteWord = () => {
 
-    axios.delete(`dictionaries/words/${wordId}`)
+    axios.delete(`dictionaries/${dictionaryId}/words/${wordId}`)
     .then(()=>{
       getItems();
       handleClose();
     }).catch(error=>{
       console.log(error);
+      console.log(dictionaryId);
+      console.log(wordId);
     })
   }
   return (
@@ -24,7 +26,7 @@ export default function DeleteWord({handleClose,getItems, wordId}) {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Do You realy want to delete this word?
+            Do You realy want to remove this word from dictionary?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

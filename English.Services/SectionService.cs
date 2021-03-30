@@ -97,6 +97,11 @@ namespace English.Services
         {
             return _repository.Section.FindDictionariesInSection(sectionId);
         }
+
+        public IEnumerable<Dictionary> FindDictionariesNotInSection(Guid sectionId)
+        {
+            return _repository.Section.FindDictionariesNotInSection(sectionId);
+        }
         public async Task AddDictionaryToSection(Guid dictionaryId, Guid sectionId)
         {
             await _repository.Section.AddDictionaryToSection(dictionaryId, sectionId);
@@ -140,8 +145,7 @@ namespace English.Services
         }
 
 
-
-
+        
 
         public async Task Save() => await _repository.Save();
 

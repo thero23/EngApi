@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using AutoMapper;
 using Contracts;
@@ -12,9 +11,6 @@ using Entities.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace EnglishApi.Controllers
@@ -41,12 +37,9 @@ namespace EnglishApi.Controllers
         [Route("words")]
         public  async Task<IActionResult> GetAllWords()
         {
-
             var words =  await _service.FindAllWords(false);
             var wordsDto = _mapper.Map<IEnumerable<WordGetDto>>(words);
             return Ok(wordsDto);
-
-            
         }
 
         [HttpGet]
@@ -344,10 +337,10 @@ namespace EnglishApi.Controllers
 
 
         //DictionaryWord
-        //api/dictionary/{?}/words/{?}..
+        //api/dictionary/{id}/words/{id}..
 
         
-        [HttpGet, Authorize]
+        [HttpGet]
         [Route("{id}/words", Name = "GetWordsFromDictionary")]
         public async Task<IActionResult> GetWordsFromDictionary(Guid id)
         {
@@ -384,7 +377,7 @@ namespace EnglishApi.Controllers
                 return NotFound();
             }
 
-            if (!(await _service.IsWordInDictionary(word, dictionary)))
+            if (await _service.IsWordInDictionary(word, dictionary))
             {
                 _logger.LogInfo($"This word already exist in dictionary");
 

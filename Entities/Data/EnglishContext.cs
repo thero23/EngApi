@@ -17,7 +17,7 @@ namespace Entities.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-                //builder.ApplyConfiguration(new RoleConfiguration());
+                builder.ApplyConfiguration(new RoleConfiguration());
         }
 
         public DbSet<Word> Words{ get; set; }
@@ -29,6 +29,7 @@ namespace Entities.Data
         public DbSet<SectionUser> SectionUsers { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Exercise> Exercises { get; set; }
+        public DbSet<SubsectionExercise> SubsectionExercises { get; set; }
 
     }
 }

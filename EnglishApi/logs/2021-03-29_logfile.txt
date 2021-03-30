@@ -1,0 +1,2 @@
+2021-03-29 01:00:12.1406 WARN Authenticate: Authentication failed. Wrong user name or password.
+2021-03-29 23:00:05.2348 INFO Dictionary with id: 00000000-0000-0000-0000-000000000000 doesn't exist in database

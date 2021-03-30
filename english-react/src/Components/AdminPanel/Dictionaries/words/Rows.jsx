@@ -27,7 +27,7 @@ const useRowStyles = makeStyles({
 });
 
 const Rows = (props) => {
-  const { row } = props;
+  const { dictionary } = props;
   const [open, setOpen] = useState(false);
   const classes = useRowStyles();
 
@@ -37,7 +37,7 @@ const Rows = (props) => {
   }, [])
 
   const getItems = () => {
-    axios.get(`/dictionaries/${row.id}/words`)
+    axios.get(`/dictionaries/${dictionary.id}/words`)
       .then(response => {
         const words = response.data;
         changeWords(words);
@@ -46,17 +46,14 @@ const Rows = (props) => {
         alert(error);
       })
   }
-  const handleClose = () => {
-    setOpen(false);
-  };
 
-  const handleClickOpen = (name, id) => {
+  const handleClickOpen = (name, id, dictionaryId) => {
     switch (name) {
-      case 'add': props.setModal(<AddWord handleClose={props.handleClose} getItems={getItems} />)
+      case 'add': props.setModal(<AddWord handleClose={props.handleClose} getItems={getItems} dictionaryId={dictionaryId} />)
         break;
       case 'edit': props.setModal(<EditWord handleClose={props.handleClose} getItems={getItems} wordId={id} />)
         break;
-      case 'delete': props.setModal(<DeleteWord handleClose={props.handleClose} getItems={getItems} wordId={id} />)
+      case 'delete': props.setModal(<DeleteWord handleClose={props.handleClose} getItems={getItems} wordId={id}  dictionaryId={dictionaryId} />)
         break;
       default:
         break;
@@ -76,13 +73,13 @@ const Rows = (props) => {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell>{row.name}</TableCell>
-        <TableCell>{row.secretName}</TableCell>
+        <TableCell>{dictionary.name}</TableCell>
+        <TableCell>{dictionary.secretName}</TableCell>
         <TableCell align="right">
-          <IconButton aria-label="edit" onClick={() => props.actions('edit', row.id)}>
+          <IconButton aria-label="edit" onClick={() => props.actions('edit', dictionary.id)}>
             <EditTwoTone fontSize="large" style={{ color: yellow[500] }} />
           </IconButton>
-          <IconButton aria-label="delete" onClick={() => props.actions('delete', row.id)}>
+          <IconButton aria-label="delete" onClick={() => props.actions('delete', dictionary.id)}>
             <DeleteTwoTone fontSize="large" style={{ color: red[500] }} />
           </IconButton>
         </TableCell>
@@ -103,7 +100,7 @@ const Rows = (props) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <IconButton aria-label="add" onClick={() => handleClickOpen('add')} >
+                  <IconButton aria-label="add" onClick={() => handleClickOpen('add', null, dictionary.id)} >
                     <AddCircleTwoTone fontSize="small" style={{ color: blue[500] }} />
                   </IconButton>
                   {words.map((word) => (
@@ -115,7 +112,7 @@ const Rows = (props) => {
                         <IconButton aria-label="edit" onClick={() => handleClickOpen('edit', word.id) }>
                           <EditTwoTone fontSize="small" style={{ color: yellow[500] }} />
                         </IconButton>
-                        <IconButton aria-label="delete" onClick={() => handleClickOpen('delete', word.id)}>
+                        <IconButton aria-label="delete" onClick={() => handleClickOpen('delete', word.id, dictionary.id)}>
                           <DeleteTwoTone fontSize="small" style={{ color: red[500] }} />
                         </IconButton>
                       </TableCell>

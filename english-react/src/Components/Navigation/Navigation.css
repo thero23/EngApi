@@ -1,7 +1,6 @@
 .Navigation{
     display: flex;
     justify-content: center;
-    border: 1px solid black;
 }
 
 .Navigation nav{
@@ -10,6 +9,7 @@
 .Navigation header{
     display: flex;
     justify-content: center;
+    height: 10vh;
     width: 100vw;
     align-items: center;
     
@@ -35,6 +35,7 @@
 .Navigation li{
     display: inline-block;
     margin: 20px;
+
 }
 
 .Navigation nav a{

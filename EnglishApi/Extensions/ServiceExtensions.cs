@@ -67,7 +67,10 @@ namespace EnglishApi.Extensions
             configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
-            var secretKey = Environment.GetEnvironmentVariable("SECRET");
+            // var secretKey = Environment.GetEnvironmentVariable("SECRET");
+            var secretKey = "EnglishApiSecretKey";
+;
+
             services.AddAuthentication(opt => {
                     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;

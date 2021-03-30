@@ -45,6 +45,35 @@ namespace English.Services
         {
             _repository.Subsection.Delete(entity);
         }
+
+        public async Task<IEnumerable<Exercise>> GetExercisesFromSubsection(Guid subsectionId)
+        {
+            return await _repository.Subsection.GetExercisesFromSubsection(subsectionId);
+        }
+
+        public async Task<IEnumerable<Exercise>> GetExercisesNotInSubsection(Guid subsectionId)
+        {
+            var exercises = (await _repository.Exercise.GetAllExercises(false)).Where(e=>!(_repository.Subsection.IsExerciseInSubsection(e.Id, subsectionId).Result));
+            
+            return exercises;
+        }
+
+        public async Task AddExerciseToSubsection(Guid exerciseId, Guid subsectionId)
+        {
+            await _repository.Subsection.AddExerciseToSubsection(exerciseId, subsectionId);
+        }
+
+        public void RemoveExerciseFromSubsection(Guid exerciseId, Guid subsectionId)
+        {
+            _repository.Subsection.RemoveExerciseFromSubsection(exerciseId, subsectionId);
+        }
+
+        public async Task<bool> IsExerciseInSubsection(Guid exerciseId, Guid subsectionId)
+        {
+            return await _repository.Subsection.IsExerciseInSubsection(exerciseId, subsectionId);
+        }
+
+
         public async Task Save() => await _repository.Save();
 
     }

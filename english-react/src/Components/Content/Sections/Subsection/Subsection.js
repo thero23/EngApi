@@ -1,9 +1,9 @@
 import React from 'react';
 import './Subsection.css';
 
-const Subsection = ({name, clicked}) =>{
+const Subsection = ({name, clicked, selected}) =>{
     return(
-        <div className='Subsection' onClick={clicked}>
+        <div className={`Subsection ${selected &&('selected-subsection')}`} onClick={clicked}>
             {name}
         </div>
     );

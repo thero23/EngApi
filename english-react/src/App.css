@@ -1,4 +1,33 @@
-.App {
-  text-align: center;
+.root {
+  height: 100vh;
 }
 
+.App {
+  text-align: center;
+  font-family: 'Noto Sans JP', sans-serif;
+  overflow: auto;
+  box-sizing: border-box;
+  z-index: 990;
+  height: 100vh;
+ 
+}
+
+.main-content {
+  width: 90%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  margin-top: 20px;
+
+}
+
+.footer {
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px solid black;
+  position: relative;
+  bottom: 0;
+}
+
+.help {
+  min-height: 75vh;
+}

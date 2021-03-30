@@ -47,6 +47,47 @@ namespace EnglishApi.Controllers
             return Ok(isTeacher);
         }
 
+        [HttpGet, Authorize]
+        [Route("checkadmin")]
+        public async Task<IActionResult> CheckAdmin()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var isAdmin = new { admin = User.IsInRole("Administrator") };
+
+            return Ok(isAdmin);
+        }
+
+        [HttpGet, Authorize]
+        [Route("getUsers")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _userManager.GetUsersInRoleAsync("User");
+            var teachers =await _userManager.GetUsersInRoleAsync("Teacher");
+            var admins = await _userManager.GetUsersInRoleAsync("Administrator");
+
+            var allUsers = new {users = users, teachers = teachers, admins = admins};
+            return Ok(allUsers);
+        }
+
+        [HttpGet, Authorize]
+        [Route("getCurrentUser")]
+        public async Task<IActionResult> getCurrentUser()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            var role = await _userManager.GetRolesAsync(user);
+            return Ok(new {user = user, role = role});
+        }
+        [HttpPost]
+        [Route("changeRole/{userId}/{role}/{oldRole}")]
+        public async Task<IActionResult> ChangeRole(string userId, string role, string oldRole)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            await _userManager.RemoveFromRoleAsync(user, oldRole);
+            await _userManager.AddToRoleAsync(user, role);
+            return Ok();
+        }
+
         [HttpPost]
         [Route("register")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
@@ -82,11 +123,8 @@ namespace EnglishApi.Controllers
                 _logger.LogWarn($"{nameof(Authenticate)}: Authentication failed. Wrong user name or password.");
                 return Unauthorized();
             }
-            return Ok(new { Token = await _authManager.CreateToken() });
+            return Ok(new { Token = await _authManager.CreateToken()});
         }
-
-
-
 
 
     }

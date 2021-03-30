@@ -7,6 +7,10 @@
     background-color: rgb(223, 213, 213);
 }
 
+.selected-subsection {
+    background-color: rgb(184, 143, 143);
+}
+
 .Subsections{
     margin-left: 20px;
 }
